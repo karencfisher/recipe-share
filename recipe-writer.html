@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WorldRecipePeace - Recipe Writer</title>
+    <script src="writeRecipeToFile-1.js" defer></script>
+    <script src="script.js" defer></script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+    <header>
+        <h1>World Recipeace Recipe Builder</h1>
+    </header>
+    <main>
+        <section id="recipe-title">
+            <div class="input-field">
+                <input class="input" id="title" type="text" placeholder="Add recipe title"
+                    aria-label="title text field">
+            </div>
+        </section>
+
+        <section id="ingredients">
+            <div class="input-field">
+                <input class="input" id="ingredient" type="text" placeholder="Add ingredient name" 
+                    aria-label="ingredient text field">
+                <button class="add-button" id="add-ingredient" aria-label="Add ingredient">Add</button>
+            </div>
+            <div class="container" id="ingredient-container" tabindex="0" 
+                aria-label="ingredients, tab to select items, spacebar to remove"></div>
+        </section>
+        
+        <section id="instructions">
+            <div class="input-field">
+                <input class="input" id="instruction" type="text" placeholder="Add instruction"
+                    aria-label="instruction text field">
+                <button class="add-button" id="add-instruction" aria-label="Add instruction">Add</button>
+            </div>
+            <div class="container" id="instruction-container" tabindex="0" 
+                aria-label="instructions, tab to select items, spacebar to remove"></div>
+        </section>
+
+        <div id="error-message" aria-live="assertive"></div>
+    </main>
+
+    <footer>
+        <div id="choices">
+            <div id="theme">
+                <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
+                <label for="darkmode">Dark mode</label>
+            </div>
+            <div id="buttons">
+                <button id="reset-button" aria-label="reset form">Reset</button>
+                <button id="save-button" aria-label="save recipe">Save recipe</button>
+            </div>
+        </div>
+    </footer>
+
+    
+</body>
+</html>

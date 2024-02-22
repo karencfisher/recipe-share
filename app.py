@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from urllib.parse import unquote
 
 from db import DB
-from description_genrator import generateDescription
+from description_generator import generateDescription
 
 
 app = Flask(__name__)

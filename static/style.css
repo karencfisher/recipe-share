@@ -8,7 +8,7 @@ body {
     --widget-focus-background-color: rgb(238, 193, 97);
     --border-color: rgb(124, 15, 15);
     --font-color: rgb(73, 5, 5);
-    --region-width: 350px;
+    --region-width: 330px;
 
     display: flex;
     flex-direction: column;
@@ -49,13 +49,29 @@ header {
 }
 
 main, footer {
-    width: var(--region-width);
     border-width: 1px;
     border-style: solid;
     border-radius: 10px;
     border-color: var(--border-color);
     margin-bottom: 10px;
     padding: 10px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    column-gap: 10px;
+}
+
+footer {
+    width: var(--region-width);
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    width: calc(var(--region-width) - 20px);
+    justify-content: flex-start;
 }
 
 .input-field {
@@ -79,6 +95,13 @@ main, footer {
 
 .input-field > input:focus {
     background: var(--widget-focus-background-color);
+}
+
+.section-label {
+    flex: 1;
+    align-self: center;
+    font-weight: bold;
+    padding-left: 5px;
 }
 
 .container {
@@ -122,6 +145,16 @@ main, footer {
 
 #recipe-title > .input-field {
     margin-bottom: 30px;
+    min-width: calc(var(--region-width) - 20px);
+}
+
+#description-text {
+   flex: 1;
+   padding: 5px;
+}
+
+#description-text:focus {
+    border: none;
 }
 
 #choices {
@@ -162,10 +195,35 @@ main, footer {
 
 @media screen and (min-width: 768px) {
     body {
-        --region-width: 600px;
+        --region-width: 350px;
     }
 
     h1 {
         font-size: 1.8rem;
+    }
+
+    header {
+        width: calc(var(--region-width) * 2 - 5px);
+    }
+
+    footer {
+        width: calc(var(--region-width) * 2 - 5px);
+    }
+
+    main {
+        flex-direction: row;
+    }
+
+    #recipe-title > .input-field {
+        margin-bottom: 30px;
+        min-width: calc(var(--region-width) * 2 - 30px);
+    }
+
+    #description {
+        margin-top: 65px;
+    }
+
+    #error-message {
+        min-width: calc(var(--region-width) * 2 - 30px);
     }
 }

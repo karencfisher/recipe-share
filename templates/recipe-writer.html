@@ -4,48 +4,71 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldRecipePeace - Recipe Writer</title>
-    <script src="writeRecipeToFile-1.js" defer></script>
-    <script src="script.js" defer></script>
-    <link rel="stylesheet" href="style.css" />
+    <script src="../static/script.js" defer></script>
+    <link rel="stylesheet" href="../static/style.css" />
 </head>
 <body>
     <header>
-        <h1>World Recipeace Recipe Builder</h1>
+        <h1>Recipe Writer</h1>
     </header>
     <main>
-        <section id="recipe-title">
-            <div class="input-field">
-                <input class="input" id="title" type="text" placeholder="Add recipe title"
-                    aria-label="title text field">
-            </div>
-        </section>
+        <div class="column" id="left-column">
+            <section id="recipe-title">
+                <div class="input-field">
+                    <input class="input" id="title" type="text" placeholder="Add recipe title"
+                        aria-label="title text field">
+                </div>
+            </section>
 
-        <section id="ingredients">
-            <div class="input-field">
-                <input class="input" id="ingredient" type="text" placeholder="Add ingredient name" 
-                    aria-label="ingredient text field">
-                <button class="add-button" id="add-ingredient" aria-label="Add ingredient">Add</button>
-            </div>
-            <div class="container" id="ingredient-container" tabindex="0" 
-                aria-label="ingredients, tab to select items, spacebar to remove"></div>
-        </section>
-        
-        <section id="instructions">
-            <div class="input-field">
-                <input class="input" id="instruction" type="text" placeholder="Add instruction"
-                    aria-label="instruction text field">
-                <button class="add-button" id="add-instruction" aria-label="Add instruction">Add</button>
-            </div>
-            <div class="container" id="instruction-container" tabindex="0" 
-                aria-label="instructions, tab to select items, spacebar to remove"></div>
-        </section>
+            <section id="ingredients">
+                <div class="input-field">
+                    <input class="input" id="ingredient" type="text" placeholder="Add ingredient name" 
+                        aria-label="ingredient text field">
+                    <button class="add-button" id="add-ingredient" aria-label="Add ingredient">Add</button>
+                </div>
+                <div class="container" id="ingredient-container" tabindex="0" 
+                    aria-label="ingredients, tab to select items, spacebar to remove"></div>
+            </section>
+            
+            <section id="instructions">
+                <div class="input-field">
+                    <input class="input" id="instruction" type="text" placeholder="Add instruction"
+                        aria-label="instruction text field">
+                    <button class="add-button" id="add-instruction" aria-label="Add instruction">Add</button>
+                </div>
+                <div class="container" id="instruction-container" tabindex="0" 
+                    aria-label="instructions, tab to select items, spacebar to remove"></div>
+            </section>
+        </div>
+
+        <div class="column" id="right column">
+            <section id="description">
+                <div class="input-field">
+                    <span class="section-label">Write a description below</span>
+                    <button id="generate-button">I have writer's block</button>
+                </div>
+                <div class="container" id="description-container">
+                    <textarea name="description-text" id="description-text" cols="30" rows="10"
+                        placeholder="Add enticing description"></textarea>
+                </div>
+            </section>
+
+            <section id="tags"></section>
+                <div class="input-field">
+                    <input class="input" id="tag" type="text" placeholder="Add tag">
+                    <button class="add-button" id="add-tag">Add</button>
+                </div>
+                <div class="container" id="tags-container" tabindex="0" 
+                    aria-label="ingredients, tab to select items, spacebar to remove"></div>
+            </section>
+        </div>
 
         <div id="error-message" aria-live="assertive"></div>
     </main>
 
     <footer>
         <div id="choices">
-            <div id="theme">
+            <div class="choice" id="theme">
                 <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
                 <label for="darkmode">Dark mode</label>
             </div>

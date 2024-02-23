@@ -19,7 +19,6 @@ def queryDb():
     global db
     if db is None:
         db = DB()
-
     method = request.args.get("method")
     if method == "semantic":
         query = unquote(request.args.get("query"))
@@ -43,18 +42,16 @@ def queryDb():
 def preview_recipe():
     if not request.is_json:
         return jsonify({"response": 403}), 403
-    # TODO
+    return render_template("recipe-card.html", recipe=request.json)
 
 
 @app.route('/insert', methods=['POST'])
 def insert_db():
     if not request.is_json:
         return jsonify({"response": 403}), 403
-    
     global db
     if db is None:
         db = DB()
-
     db.addRecipe(request.json)
     return jsonify({"response": 200}), 200
 
@@ -63,8 +60,7 @@ def insert_db():
 def generate_description():
     if not request.is_json:
         return jsonify({"response": 403}), 403
-    
-    description = generateDescription()
+    description = generateDescription(request.json)
     return jsonify({"response": description}), 200
 
 

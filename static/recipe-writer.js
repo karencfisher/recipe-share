@@ -134,9 +134,9 @@ function buildRecipe(complete) {
         Ingredients: [],
         Instructions: [],
         Tags: [],
-        Image_Name: null,
+        Image_Name: "",
         Views: 0,
-        Description: null,
+        Description: "",
     };
 
     // check title

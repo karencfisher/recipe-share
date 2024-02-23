@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from urllib.parse import unquote
 
 from db import DB
@@ -35,6 +35,7 @@ def queryDb():
     else:
         id = request.args.get("id")
         results = db.query_recipe_by_id(id)
+        return render_template("recipe-card.html", recipe=results)
     return jsonify(results), 200
 
 

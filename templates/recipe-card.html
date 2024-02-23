@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe share - {{recipe.title}}</title>
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="./static/recipe-card.js" defer></script>
+    <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        h3 {
+            margin-top: 0px;
+            margin-bottom: 5px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        div#description-text {
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-style: solid;
+            border-radius: 10px;
+            border-width: 1px;
+            border-color: var(--border-color);
+        }
+
+        div#description-text::first-line{
+            font-weight:bold
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>{{recipe.title}}</h1>
+    </header>
+    <main>
+        <div class="column" id=left-column">
+            <section id="card-description">
+                {% if(recipe.image != "") %}
+                    <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
+                {% endif %}
+                <div id="description-text">
+                    {{recipe.description}}
+                </div>
+            </section>
+
+            <section id="tags"></section>
+                {% if recipe.tags.size == [] %}
+                    <div class="container" id="tags-container">
+                        {% for tag in recipe.tags %}
+                            <div class="tag">{{ tag }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+        </div>
+
+        <div class="column" id="right-column">
+            <section class="recipe-card" id="ingredients">
+                <h3>
+                    Ingredients
+                </h3>
+                <ul>
+                    {% for ingredient in recipe.ingredients %}
+                        <li>{{ ingredient }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            
+            <section class="recipe-card" id="instructions">
+                <h3>
+                    Instructions
+                </h3>
+                <ol>
+                    {% for instruction in recipe.instructions %}
+                        <li>{{ instruction }}</li>
+                    {% endfor %}
+                </ol>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div id="choices">
+            <div class="choice" id="theme">
+                <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
+                <label for="darkmode">Dark mode</label>
+            </div>
+            <div id="buttons">
+                <button id="printable-button" aria-label="printable version">Printable Version</button>
+                <button id="download-button" aria-label="printable version">Download</button>
+            </div>
+        </div>
+    </footer>
+
+    
+</body>
+</html>

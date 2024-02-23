@@ -49,7 +49,7 @@
             </section>
 
             <section id="tags"></section>
-                {% if recipe.tags.size == [] %}
+                {% if recipe.tags is defined and texts|length > 0 %}
                     <div class="container" id="tags-container">
                         {% for tag in recipe.tags %}
                             <div class="tag">{{ tag }}</div>

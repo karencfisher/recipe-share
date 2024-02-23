@@ -38,8 +38,15 @@ def queryDb():
     return jsonify(results), 200
 
 
+@app.route('/preview', methods=['POST'])
+def preview_recipe():
+    if not request.is_json:
+        return jsonify({"response": 403}), 403
+    # TODO
+
+
 @app.route('/insert', methods=['POST'])
-def insertDB():
+def insert_db():
     if not request.is_json:
         return jsonify({"response": 403}), 403
     

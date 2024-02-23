@@ -79,7 +79,7 @@ footer {
     flex-direction: row;
     gap: 5px;
     margin-top: 5px;
-    margin-bottom: 5px;
+    margin-bottom: 0px;
 }
 
 .input-field > input {
@@ -119,7 +119,7 @@ footer {
     padding: 10px 10px 10px 10px;
 }
 
-.container#ingredient-container {
+.container#ingredient-container, .container#tags-container {
     flex-direction: row;
     flex-wrap: wrap;
 }
@@ -129,7 +129,7 @@ footer {
     flex: 1;
 }
 
-.ingredient, .instruction {
+.ingredient, .instruction, .tag {
     border-width: 1px;
     border-style: solid;
     border-radius: 10px;
@@ -151,10 +151,12 @@ footer {
 #description-text {
    flex: 1;
    padding: 5px;
+   background-color: var(--widget-background-color);
+   color: var(--font-color);
 }
 
 #description-text:focus {
-    border: none;
+    background-color: var(--widget-focus-background-color);
 }
 
 #choices {

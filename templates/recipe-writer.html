@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WorldRecipePeace - Recipe Writer</title>
-    <script src="../static/script.js" defer></script>
+    <script src="../static/recipe-writer.js" defer></script>
     <link rel="stylesheet" href="../static/style.css" />
 </head>
 <body>
@@ -44,7 +44,7 @@
         <div class="column" id="right column">
             <section id="description">
                 <div class="input-field">
-                    <span class="section-label">Write a description below</span>
+                    <span class="section-label">Write description</span>
                     <button id="generate-button">I have writer's block</button>
                 </div>
                 <div class="container" id="description-container">
@@ -55,7 +55,7 @@
 
             <section id="tags"></section>
                 <div class="input-field">
-                    <input class="input" id="tag" type="text" placeholder="Add tag">
+                    <input class="input" id="tag" type="text" placeholder="Add tag (e.g., 'vegan' or 'Mexican')">
                     <button class="add-button" id="add-tag">Add</button>
                 </div>
                 <div class="container" id="tags-container" tabindex="0" 
@@ -74,7 +74,8 @@
             </div>
             <div id="buttons">
                 <button id="reset-button" aria-label="reset form">Reset</button>
-                <button id="save-button" aria-label="save recipe">Save recipe</button>
+                <button id="preview-button" aria-label="preview recipe">Preview</button>
+                <button id="save-button" aria-label="save recipe">Save</button>
             </div>
         </div>
     </footer>

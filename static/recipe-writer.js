@@ -95,36 +95,52 @@ instructionText.addEventListener("keypress", (e) => {
     })
 });
 
+const descriptionText = document.getElementById("description-text")
+const tagButton = document.getElementById("add-tag");
+const tagText = document.getElementById("tag");
+const tagList = document.getElementById("tags-container");
+
+tagButton.addEventListener("click", () => {
+    additem(tagText.value, "tag", tagList);
+    tagText.value = "";
+    tagText.focus();
+});
+
+tagText.addEventListener("keypress", (e) => {
+    if (e.code === "Enter") {
+        additem(tagText.value, "tag", tagList);
+        tagText.value = "";
+    }
+});
+
+[...document.getElementsByClassName("container")].forEach((item) => {
+    item.addEventListener("focus", () => {
+        const itemName = item.id.split("-")[0];
+        const countItems = item.querySelectorAll("div").length;
+        displayMessage(`${countItems} ${itemName}s`, false);
+    })
+});
+
 /* Save and reset handlers ***********************/
 const resetButton = document.getElementById("reset-button");
 const saveButton = document.getElementById("save-button");
+const previewButton = document.getElementById("preview-button");
+const generateButton = document.getElementById("generate-button");
 
-resetButton.addEventListener("click", () => {
-    // clear title
-    titleText.value = "";
-    titleText.focus();
-
-    // clear ingredients
-    ingredientText.value = "";
-    const ingredients = [...document.getElementsByClassName("ingredient")];
-    ingredients.forEach((item) => item.remove())
-
-    // clear instructions
-    instructionText.value = "";
-    const instructions = [...document.getElementsByClassName("instruction")];
-    instructions.forEach((item) => item.remove())
-
-    displayMessage("Form cleared", false);
-});
-
-saveButton.addEventListener("click", () => {
+function buildRecipe(complete) {
     // initialize recipe object
-    const recipe = {title: titleText.value,
-                    ingredients: [],
-                    instructions: []};
-    
+    const recipe = {
+        Title: titleText.value,
+        Ingredients: [],
+        Instructions: [],
+        Tags: [],
+        Image_Name: null,
+        Views: 0,
+        Description: null,
+    };
+
     // check title
-    if (recipe.title === "") {
+    if (recipe.Title === "") {
         displayMessage("Must have a title!", true);
         titleText.focus();
         return;
@@ -137,7 +153,7 @@ saveButton.addEventListener("click", () => {
         ingredientText.focus();
         return;
     }
-    ingredients.forEach((item) => recipe.ingredients.push(item.innerHTML));
+    ingredients.forEach((item) => recipe.Ingredients.push(item.innerHTML));
 
     // add instructions
     const instructions = [...document.getElementsByClassName("instruction")];
@@ -146,11 +162,71 @@ saveButton.addEventListener("click", () => {
         instructionText.focus();
         return;
     }
-    instructions.forEach((item) => recipe.instructions.push(item.innerHTML));
+    instructions.forEach((item) => recipe.Instructions.push(item.innerHTML));
 
-    // write card
-    writeRecipeToFile(recipe);
-    displayMessage("Recipe card downloaded", false);
+    if (complete) {
+        // add instructions
+        const tags = [...document.getElementsByClassName("tag")];
+        if (tags.length === 0) {
+            displayMessage("Must include at least one tag!", true);
+            tagText.focus();
+            return;
+        }
+        tags.forEach((item) => recipe.Tags.push(item.innerHTML));
+
+        // add description 
+        if (descriptionText.value === "") {
+            displayMessage("Must include a description. \"I have writer\'s block\" button will allow AI to generate.", true );
+            descriptionText.focus();
+            return;
+        }
+        recipe.Description = descriptionText.value;
+    }
+    return recipe;
+}
+
+resetButton.addEventListener("click", () => {
+    // clear title
+    titleText.value = "";
+    titleText.focus();
+
+    // clear ingredients
+    ingredientText.value = "";
+    const ingredients = [...document.getElementsByClassName("ingredient")];
+    ingredients.forEach((item) => item.remove());
+
+    // clear instructions
+    instructionText.value = "";
+    const instructions = [...document.getElementsByClassName("instruction")];
+    instructions.forEach((item) => item.remove());
+
+    // clear tags
+    tagText.value = "";
+    const tags = [...document.getElementsByClassName("tag")];
+    tags.forEach((item) => item.remove());
+
+    // clear description
+    descriptionText.value = "";
+    displayMessage("Form cleared", false);
+});
+
+saveButton.addEventListener("click", () => {
+    recipe = buildRecipe(true);
+    // submit recipe - TODO
+    
+});
+
+previewButton.addEventListener("click", () => {
+    recipe = buildRecipe(true);
+    // preview recipe - TODO
+});
+
+generateButton.addEventListener("click", () => {
+    recipe = buildRecipe(false);
+    if (recipe != undefined) {
+        // description generation - TODO
+        displayMessage("ChatGPT has written a description for you! You can edit it as you see fit.", true);
+    }
 });
 
 /* error and screen reader live broadcasts ********/

@@ -37,7 +37,7 @@ button:focus {
 }
 
 header {
-    width: var(--region-width);
+    width: calc(var(--region-width) + 20px);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -64,7 +64,7 @@ main {
 }
 
 footer {
-    width: var(--region-width);
+    width: calc(var(--region-width) + 20px);
 }
 
 img {
@@ -119,6 +119,8 @@ img {
 
 .container {
     display: flex;
+    flex-direction: column;
+    flex: 1;
     align-content: start;
     row-gap: 5px;
     column-gap: 5px;
@@ -132,16 +134,6 @@ img {
     padding: 10px 10px 10px 10px;
 }
 
-.container#ingredient-container, .container#tags-container {
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
-.container#instruction-container {
-    flex-direction: column;
-    flex: 1;
-}
-
 .ingredient, .instruction, .tag {
     border-width: 1px;
     border-style: solid;
@@ -150,6 +142,13 @@ img {
     background: var(--widget-background-color);
     padding: 5px;
     height: 2rem;
+}
+
+.ingredient > input, .instruction > input, .tag > input {
+    min-width: 100%;
+    background: var(--widget-background-color);
+    border-style: none;
+    color: var(--font-color);
 }
 
 .ingredient:focus, .instruction:focus {
@@ -231,7 +230,7 @@ img {
 
     #recipe-title > .input-field {
         margin-bottom: 30px;
-        min-width: calc(var(--region-width) * 2 - 30px);
+        min-width: calc(var(--region-width) * 2 - 20px);
     }
 
     #description {
@@ -239,6 +238,6 @@ img {
     }
 
     #error-message {
-        min-width: calc(var(--region-width) * 2 - 30px);
+        min-width: calc(var(--region-width) * 2 - 20px);
     }
 }

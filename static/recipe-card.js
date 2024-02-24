@@ -1,3 +1,8 @@
+document.getElementById("back-button").addEventListener("click", () => {
+    history.back();
+});
+
+
 function toggleTheme(obj) {
     if (obj.checked) {
         document.body.style.setProperty("--background-color", "rgb(20, 20, 20)");

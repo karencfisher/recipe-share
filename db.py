@@ -70,6 +70,8 @@ class DB:
 
     def query_recipe_by_id(self, id):
         result = self.collection.find_one({"_id": ObjectId(id)})
+        if result is None:
+            return None
         recipe = {
                 "title": result["Title"],
                 "image": result["Image_Name"],

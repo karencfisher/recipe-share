@@ -3,31 +3,23 @@ const titleText = document.getElementById("title");
 titleText.focus();
 
 /* Add/remove items ******************************/
-function additem(htmlString, itemClass, parent) {
-    if (htmlString === "") {
+function additem(string, itemClass, parent) {
+    if (string === "") {
         displayMessage(`Text field for ${itemClass} must not be empty!`, true);
         parent.previousElementSibling.firstElementChild.focus();
         return;
     }
     // create new element
     const item = document.createElement("div");
-    item.innerHTML = htmlString;
+    item.innerHTML = `<input type="text" value="${string}" />`;
 
     // set attributes
     item.classList.add(itemClass);
     item.setAttribute("tabindex", "0");
 
-    // add event listeners to delete (click or space)
+    // add event listeners to delete (shift + click or space)
     item.addEventListener("click", (e) => {
-        item.remove();
-        const countItems = parent.querySelectorAll("div").length;
-        displayMessage(`${htmlString} removed ${countItems} ${itemClass}s remaining`, false);
-        parent.previousElementSibling.firstElementChild.focus();
-    });
-
-    item.addEventListener("keypress", (e) => {
-        // space bar to remove, enter to undo add
-        if (e.code === "Space") {
+        if (e.shiftKey) {
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
             displayMessage(`${htmlString} removed ${countItems} ${itemClass}s remaining`, false);
@@ -35,10 +27,23 @@ function additem(htmlString, itemClass, parent) {
         }
     });
 
+    item.addEventListener("keypress", (e) => {
+        // shift+space bar to remove
+        if (e.shiftKey && e.code === "Space") {
+            item.remove();
+            const countItems = parent.querySelectorAll("div").length;
+            displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
+            parent.previousElementSibling.firstElementChild.focus();
+        }
+        else if (e.code === "Enter") {
+            parent.previousElementSibling.firstElementChild.focus();
+        }
+    });
+
     // Add to parent
     parent.appendChild(item);
     const countItems = parent.querySelectorAll("div").length;
-    displayMessage(`${htmlString} added to total ${countItems} ${itemClass}s`, false);             
+    displayMessage(`${string} added to total ${countItems} ${itemClass}s`, false);             
 }
 
 const ingredientButton = document.getElementById("add-ingredient");
@@ -153,7 +158,10 @@ function buildRecipe(complete) {
         ingredientText.focus();
         return;
     }
-    ingredients.forEach((item) => recipe.Ingredients.push(item.innerHTML));
+    ingredients.forEach((item) => {
+        const textBox = item.querySelector("input");
+        recipe.Ingredients.push(textBox.value);
+    });
 
     // add instructions
     const instructions = [...document.getElementsByClassName("instruction")];
@@ -162,7 +170,10 @@ function buildRecipe(complete) {
         instructionText.focus();
         return;
     }
-    instructions.forEach((item) => recipe.Instructions.push(item.innerHTML));
+    instructions.forEach((item) => {
+        const textBox = item.querySelector("input");
+        recipe.Instructions.push(textBox.value);
+    });
 
     if (complete) {
         // add instructions
@@ -172,7 +183,10 @@ function buildRecipe(complete) {
             tagText.focus();
             return;
         }
-        tags.forEach((item) => recipe.Tags.push(item.innerHTML));
+        tags.forEach((item) => {
+            const textBox = item.querySelector("input");
+            recipe.Tags.push(textBox.value);
+        });
 
         // add description 
         if (descriptionText.value === "") {

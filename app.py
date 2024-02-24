@@ -33,11 +33,14 @@ def queryDb():
             results = db.semantic_query(query, int(max_found))
         elif method == "tags":
             tags = unquote(request.args.get("tags")).split(",")
-            max_found = request.args.get(max_found)
+            max_found = request.args.get("max_found")
             results = db.query_recipes_by_tags(tags, int(max_found))
         elif method == "views":
             max_found = request.args.get("max_found")
             results = db.query_recipes_top_views(int(max_found))
+        elif method == "recent":
+            max_found = request.args.get("max_found")
+            results = db.query_recipes_added(int(max_found))
         else:
             id = request.args.get("id")
             results = db.query_recipe_by_id(id)

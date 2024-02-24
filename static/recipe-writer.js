@@ -4,39 +4,42 @@ titleText.focus();
 
 /* Add/remove items ******************************/
 function additem(string, itemClass, parent) {
-    if (string === "") {
-        displayMessage(`Text field for ${itemClass} must not be empty!`, true);
-        parent.previousElementSibling.firstElementChild.focus();
-        return;
-    }
     // create new element
-    const item = document.createElement("div");
-    item.innerHTML = `<input type="text" value="${string}" />`;
+    const item = document.createElement("textarea");
+    item.innerHTML = string;
 
     // set attributes
     item.classList.add(itemClass);
-    item.setAttribute("tabindex", "0");
+    item.setAttribute("rows", "1");
 
     // add event listeners to delete (shift + click or space)
     item.addEventListener("click", (e) => {
         if (e.shiftKey) {
+            item.previousElementSibling.focus();
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
-            displayMessage(`${htmlString} removed ${countItems} ${itemClass}s remaining`, false);
-            parent.previousElementSibling.firstElementChild.focus();
+            displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
         }
     });
 
     item.addEventListener("keypress", (e) => {
         // shift+space bar to remove
         if (e.shiftKey && e.code === "Space") {
+            e.preventDefault();
+            item.previousElementSibling.focus();
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
             displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
-            parent.previousElementSibling.firstElementChild.focus();
         }
-        else if (e.code === "Enter") {
-            parent.previousElementSibling.firstElementChild.focus();
+        else if (e.ctrlKey && e.code === "Enter") {
+            e.preventDefault();
+            parent.insertBefore(item, item.previousElementSibling)
+            item.focus();
+        }
+        else if (e.shiftKey && e.code === "Enter") {
+            e.preventDefault();
+            parent.insertBefore(item, item.nextElementSibling.nextElementSibling)
+            item.focus();
         }
     });
 
@@ -127,6 +130,7 @@ tagText.addEventListener("keypress", (e) => {
 });
 
 /* Save and reset handlers ***********************/
+const backButton = document.getElementById("back-button");
 const resetButton = document.getElementById("reset-button");
 const saveButton = document.getElementById("save-button");
 const previewButton = document.getElementById("preview-button");
@@ -159,8 +163,7 @@ function buildRecipe(complete) {
         return;
     }
     ingredients.forEach((item) => {
-        const textBox = item.querySelector("input");
-        recipe.Ingredients.push(textBox.value);
+        recipe.Ingredients.push(item.value);
     });
 
     // add instructions
@@ -171,8 +174,7 @@ function buildRecipe(complete) {
         return;
     }
     instructions.forEach((item) => {
-        const textBox = item.querySelector("input");
-        recipe.Instructions.push(textBox.value);
+        recipe.Instructions.push(item.value);
     });
 
     if (complete) {
@@ -184,8 +186,7 @@ function buildRecipe(complete) {
             return;
         }
         tags.forEach((item) => {
-            const textBox = item.querySelector("input");
-            recipe.Tags.push(textBox.value);
+            recipe.Tags.push(item.value);
         });
 
         // add description 
@@ -198,6 +199,10 @@ function buildRecipe(complete) {
     }
     return recipe;
 }
+
+backButton.addEventListener("click", () => {
+    history.back();
+});
 
 resetButton.addEventListener("click", () => {
     // clear title

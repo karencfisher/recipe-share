@@ -131,7 +131,11 @@ img {
     border-radius: 10px;
     border-color: var(--border-color);
     margin: 5px 0px 30px 0px;
-    padding: 10px 10px 10px 10px;
+    padding: 5px 5px 5px 5px;
+}
+
+.container#tags-container {
+    max-height: 200px;
 }
 
 .ingredient, .instruction, .tag {
@@ -140,15 +144,12 @@ img {
     border-radius: 10px;
     border-color: var(--border-color);
     background: var(--widget-background-color);
-    padding: 5px;
-    height: 2rem;
-}
-
-.ingredient > input, .instruction > input, .tag > input {
-    min-width: 100%;
-    background: var(--widget-background-color);
-    border-style: none;
     color: var(--font-color);
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    padding: 5px;
+    height: 1.7rem;
+    overflow: hidden;
+    max-width: 100%;
 }
 
 .ingredient:focus, .instruction:focus {

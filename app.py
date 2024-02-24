@@ -51,6 +51,23 @@ def queryDb():
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
+    
+
+@app.route('/edit')
+def edit_recipe():
+    global db
+    id = request.args.get("id")
+    if id is not None:
+        try:
+            if db is None:
+                db = DB()
+            recipe = db.query_recipe_by_id(id)
+        except Exception as ex:
+            error_log.log_error(ex)
+            return jsonify({"error": "Internal server error"}), 500
+    else:
+        recipe = {"title": "", "description": ""}
+    return render_template("recipe-editor.html", recipe=recipe)
 
 
 @app.route('/preview', methods=['POST'])

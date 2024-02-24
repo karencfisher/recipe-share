@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe share - Recipe Editor</title>
+    <script src="../static/recipe-writer.js" defer></script>
+    <link rel="stylesheet" href="../static/style.css" />
+    <style>
+        img {padding: 20px;}
+    </style>
+    <script>
+        function decorate(id, textName, containerName) {
+            const item = document.getElementById(id);
+            const textBox = document.getElementById(textName);
+            const contain = document.getElementById(containerName);
+
+            item.addEventListener("click", (e) => {
+                if (e.shiftKey) {
+                    const string = item.value;
+                    item.previousElementSibling.focus();
+                    item.remove();
+                    const countItems = contain.querySelectorAll("div").length;
+                    displayMessage(`${string} removed ${countItems} ${textName}s remaining`, false);
+                }
+            });
+
+            item.addEventListener("keypress", (e) => {
+                console.log(e.code);
+                // shift+space bar to remove
+                if (e.shiftKey && e.code === "Space") {
+                    const string = item.value;
+                    e.preventDefault();
+                    item.previousElementSibling.focus();
+                    item.remove();
+                    const countItems = contain.querySelectorAll("div").length;
+                    displayMessage(`${string} removed ${countItems} ${textName}s remaining`, false);
+                }
+                else if (e.ctrlKey && e.code === "Enter") {
+                    e.preventDefault();
+                    contain.insertBefore(item, item.previousElementSibling);
+                    item.focus();
+                }
+                else if (e.shiftKey && e.code === "Enter") {
+                    e.preventDefault();
+                    contain.insertBefore(item, item.nextElementSibling.nextElementSibling);
+                    item.focus();
+                }
+            });
+
+            document.getElementById("kill-me").remove();
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>Recipe Editor</h1>
+    </header>
+    <main>
+        <div class="column" id="left-column">
+            <section id="recipe-title">
+                <div class="input-field">
+                    <input class="input" id="title" type="text" placeholder="Add recipe title"
+                        aria-label="title text field" value="{{ recipe.title }}">
+                </div>
+            </section>
+
+            <section id="ingredients">
+                <div class="input-field">
+                    <input class="input" id="ingredient" type="text" placeholder="Add ingredient name" 
+                        aria-label="ingredient text field">
+                    <button class="add-button" id="add-ingredient" aria-label="Add ingredient">Add</button>
+                </div>
+                <div class="container" id="ingredient-container" tabindex="0" 
+                    aria-label="ingredients, tab to select items, tab to edit, shift+spacebar to remove">
+                    {% if recipe.ingredients is defined and recipe.ingredients|length > 0 %}
+                        {% set count = namespace(value=1) %}
+                        {% for ingredient in recipe.ingredients %}
+                            <textarea class="ingredient" id="ingredient{{ count.value }}" rows="1">{{ ingredient }}</textarea>
+                            <script id="kill-me">decorate("ingredient{{ count.value }}", "ingredient", "ingredient-container")</script>
+                            {% set count.value = count.value + 1 %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </section>
+            
+            <section id="instructions">
+                <div class="input-field">
+                    <input class="input" id="instruction" type="text" placeholder="Add instruction"
+                        aria-label="instruction text field">
+                    <button class="add-button" id="add-instruction" aria-label="Add instruction">Add</button>
+                </div>
+                <div class="container" id="instruction-container" tabindex="0" 
+                    aria-label="instructions, tab to select items, tab to edit, shift+spacebar to remove">
+                    {% if recipe.instructions is defined and recipe.instructions|length > 0 %}
+                        {% set count = namespace(value=1) %}
+                        {% for instruction in recipe.instructions %}
+                            <textarea class="instruction" id="instruction{{ count.value }}" rows="1">{{ instruction }}</textarea>
+                            <script id="kill-me">decorate("instruction{{ count.value }}", "instruction", "instruction-container")</script>
+                            {% set count.value = count.value + 1 %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <div class="column" id="right column">
+            <section id="description">
+                <div class="input-field">
+                    <span class="section-label">Write description</span>
+                    <button id="generate-button">I have writer's block</button>
+                </div>
+                <div class="container" id="description-container">
+                    <textarea name="description-text" id="description-text" cols="30" rows="10"
+                        placeholder="Add enticing description">{{ recipe.description }}</textarea>
+                </div>
+            </section>
+
+            <section id="image">
+                <div class="input-field">
+                    <span class="section-label">Add image</span>
+                    
+                </div>
+                <div class="container" id="description-container">
+                    {% if recipe.image is defined and recipe.image != "" %}
+                        <img src="./static/recipe-images/{{ recipe.image}}.jpg" alt="{{ recipe.image }}">
+                    {% endif %}
+                </div>
+            </section>
+
+            <section id="tags"></section>
+                <div class="input-field">
+                    <input class="input" id="tag" type="text" placeholder="Add tag (e.g., 'vegan' or 'Mexican')">
+                    <button class="add-button" id="add-tag">Add</button>
+                </div>
+                <div class="container" id="tags-container" tabindex="0" 
+                    aria-label="ingredients, tab to select items, tab to edit, shift+spacebar to remove">
+                    {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                        {% set count = namespace(value=1) %}
+                        {% for tag in recipe.tags %}
+                            <textarea class="tag" id="tag{{ count.value }}" rows="1">{{ tag }}</textarea>
+                            <script id="kill-me">decorate("tag{{ count.value }}", "tag", "tag-container")</script>
+                            {% set count.value = count.value + 1 %}
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </section>
+        </div>
+
+        <div id="error-message" aria-live="assertive"></div>
+    </main>
+
+    <footer>
+        <div id="choices">
+            <div class="choice" id="theme">
+                <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
+                <label for="darkmode">Dark mode</label>
+            </div>
+            <div id="buttons">
+                <button id="back-button" aria-label="back">Back</button>
+                <button id="reset-button" aria-label="reset form">Reset</button>
+                <button id="preview-button" aria-label="preview recipe">Preview</button>
+                <button id="save-button" aria-label="save recipe">Save</button>
+            </div>
+        </div>
+    </footer>
+
+    
+</body>
+</html>

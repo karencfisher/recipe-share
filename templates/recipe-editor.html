@@ -76,7 +76,7 @@
                     {% if recipe.ingredients is defined and recipe.ingredients|length > 0 %}
                         {% set count = namespace(value=1) %}
                         {% for ingredient in recipe.ingredients %}
-                            <textarea class="ingredient" id="ingredient{{ count.value }}" rows="1">{{ ingredient }}</textarea>
+                            <textarea class="ingredient" id="ingredient{{ count.value }}">{{ ingredient }}</textarea>
                             <script id="kill-me">decorate("ingredient{{ count.value }}", "ingredient", "ingredient-container")</script>
                             {% set count.value = count.value + 1 %}
                         {% endfor %}
@@ -95,7 +95,7 @@
                     {% if recipe.instructions is defined and recipe.instructions|length > 0 %}
                         {% set count = namespace(value=1) %}
                         {% for instruction in recipe.instructions %}
-                            <textarea class="instruction" id="instruction{{ count.value }}" rows="1">{{ instruction }}</textarea>
+                            <textarea class="instruction" id="instruction{{ count.value }}" >{{ instruction }}</textarea>
                             <script id="kill-me">decorate("instruction{{ count.value }}", "instruction", "instruction-container")</script>
                             {% set count.value = count.value + 1 %}
                         {% endfor %}

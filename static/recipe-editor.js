@@ -3,9 +3,22 @@ const titleText = document.getElementById("title");
 titleText.focus();
 
 /* Add/remove items ******************************/
-function additem(string, itemClass, parent) {
+function focusNext(item, textBox) {
+    if (item.nextElementSibling) {
+        item.nextElementSibling.focus();
+    }
+    else if (item.previousElementSibling) {
+        item.previousElementSibling.focus();
+    }
+    else {
+        textBox.focus();
+    }
+}
+
+function addItem(textBox, itemClass, parent) {
     // create new element
     const item = document.createElement("textarea");
+    const string = textBox.value;
     item.innerHTML = string;
 
     // set attributes
@@ -15,38 +28,49 @@ function additem(string, itemClass, parent) {
     // add event listeners to delete (shift + click or space)
     item.addEventListener("click", (e) => {
         if (e.shiftKey) {
-            item.previousElementSibling.focus();
+            focusNext(item, textBox);
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
             displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
         }
     });
 
-    item.addEventListener("keypress", (e) => {
+    item.addEventListener("keydown", (e) => {
         // shift+space bar to remove
         if (e.shiftKey && e.code === "Space") {
             e.preventDefault();
-            item.previousElementSibling.focus();
+            focusNext(item, textBox);
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
             displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
         }
-        else if (e.ctrlKey && e.code === "Enter") {
+        else if (e.key === "ArrowUp") {
             e.preventDefault();
             parent.insertBefore(item, item.previousElementSibling)
             item.focus();
         }
-        else if (e.shiftKey && e.code === "Enter") {
+        else if (e.key === "ArrowDown") {
             e.preventDefault();
             parent.insertBefore(item, item.nextElementSibling.nextElementSibling)
             item.focus();
+        }
+        else if (e.key === "Insert") {
+            newItem = addItem(textBox, itemClass, parent);
+            parent.insertBefore(newItem, item);
+            newItem.focus();
+        }
+        else if (e.code === "Enter") {
+            e.preventDefault();
+            textBox.focus();
         }
     });
 
     // Add to parent
     parent.appendChild(item);
+    item.focus()
     const countItems = parent.querySelectorAll("div").length;
-    displayMessage(`${string} added to total ${countItems} ${itemClass}s`, false);             
+    displayMessage(`${string} added to total ${countItems} ${itemClass}s`, false);
+    return item;             
 }
 
 const ingredientButton = document.getElementById("add-ingredient");
@@ -66,14 +90,13 @@ titleText.addEventListener("keypress", (e) => {
 });
 
 ingredientButton.addEventListener("click", () => {
-    additem(ingredientText.value, "ingredient", ingredientList);
+    addItem(ingredientText, "ingredient", ingredientList);
     ingredientText.value = "";
-    ingredientText.focus();
 });
 
 ingredientText.addEventListener("keypress", (e) => {
     if (e.code === "Enter") {
-        additem(ingredientText.value, "ingredient", ingredientList);
+        addItem(ingredientText, "ingredient", ingredientList);
         ingredientText.value = "";
     }
 });
@@ -83,14 +106,13 @@ const instructionText = document.getElementById("instruction");
 const instructionList = document.getElementById("instruction-container");
 
 instructionButton.addEventListener("click", () => {
-    additem(instructionText.value, "instruction", instructionList);
+    addItem(instructionText, "instruction", instructionList);
     instructionText.value = "";
-    instructionText.focus();
 });
 
 instructionText.addEventListener("keypress", (e) => {
     if (e.code === "Enter") {
-        additem(instructionText.value, "instruction", instructionList);
+        addItem(instructionText, "instruction", instructionList);
         instructionText.value = "";
     }
 });
@@ -109,14 +131,13 @@ const tagText = document.getElementById("tag");
 const tagList = document.getElementById("tags-container");
 
 tagButton.addEventListener("click", () => {
-    additem(tagText.value, "tag", tagList);
+    addItem(tagText, "tag", tagList);
     tagText.value = "";
-    tagText.focus();
 });
 
 tagText.addEventListener("keypress", (e) => {
     if (e.code === "Enter") {
-        additem(tagText.value, "tag", tagList);
+        addItem(tagText, "tag", tagList);
         tagText.value = "";
     }
 });

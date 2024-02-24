@@ -150,9 +150,10 @@ img {
     height: 1.7rem;
     overflow: hidden;
     max-width: 100%;
+    min-width: 100%;
 }
 
-.ingredient:focus, .instruction:focus {
+.ingredient:focus, .instruction:focus, .tag:focus {
     background: var(--widget-focus-background-color);
 }
 

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe share - Recipe Editor</title>
-    <script src="../static/recipe-writer.js" defer></script>
+    <script src="../static/recipe-editor.js" defer></script>
     <link rel="stylesheet" href="../static/style.css" />
     <style>
         img {padding: 20px;}
@@ -18,35 +18,42 @@
             item.addEventListener("click", (e) => {
                 if (e.shiftKey) {
                     const string = item.value;
-                    item.previousElementSibling.focus();
+                    focusNext(item, textBox);
                     item.remove();
                     const countItems = contain.querySelectorAll("div").length;
                     displayMessage(`${string} removed ${countItems} ${textName}s remaining`, false);
                 }
             });
 
-            item.addEventListener("keypress", (e) => {
-                console.log(e.code);
-                // shift+space bar to remove
+            item.addEventListener("keydown", (e) => {
                 if (e.shiftKey && e.code === "Space") {
                     const string = item.value;
                     e.preventDefault();
-                    item.previousElementSibling.focus();
+                    focusNext(item, textBox);
                     item.remove();
                     const countItems = contain.querySelectorAll("div").length;
                     displayMessage(`${string} removed ${countItems} ${textName}s remaining`, false);
                 }
-                else if (e.ctrlKey && e.code === "Enter") {
+                if (e.key === "ArrowUp") {
                     e.preventDefault();
                     contain.insertBefore(item, item.previousElementSibling);
                     item.focus();
                 }
-                else if (e.shiftKey && e.code === "Enter") {
+                else if (e.key === "ArrowDown") {
                     e.preventDefault();
                     contain.insertBefore(item, item.nextElementSibling.nextElementSibling);
                     item.focus();
                 }
-            });
+                else if (e.key === "Insert") {
+                    newItem = addItem(textBox, textName, contain);
+                    contain.insertBefore(newItem, item);
+                    newItem.focus();
+                }
+                else if (e.code === "Enter") {
+                    e.preventDefault();
+                    textBox.focus();
+                }
+            })
 
             document.getElementById("kill-me").remove();
         }
@@ -76,7 +83,7 @@
                     {% if recipe.ingredients is defined and recipe.ingredients|length > 0 %}
                         {% set count = namespace(value=1) %}
                         {% for ingredient in recipe.ingredients %}
-                            <textarea class="ingredient" id="ingredient{{ count.value }}">{{ ingredient }}</textarea>
+                            <textarea class="ingredient" id="ingredient{{ count.value }}" rows="1">{{ ingredient }}</textarea>
                             <script id="kill-me">decorate("ingredient{{ count.value }}", "ingredient", "ingredient-container")</script>
                             {% set count.value = count.value + 1 %}
                         {% endfor %}
@@ -95,7 +102,7 @@
                     {% if recipe.instructions is defined and recipe.instructions|length > 0 %}
                         {% set count = namespace(value=1) %}
                         {% for instruction in recipe.instructions %}
-                            <textarea class="instruction" id="instruction{{ count.value }}" >{{ instruction }}</textarea>
+                            <textarea class="instruction" id="instruction{{ count.value }}" rows="1">{{ instruction }}</textarea>
                             <script id="kill-me">decorate("instruction{{ count.value }}", "instruction", "instruction-container")</script>
                             {% set count.value = count.value + 1 %}
                         {% endfor %}

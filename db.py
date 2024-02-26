@@ -1,9 +1,12 @@
 import os
+import io
+import base64
 from dotenv import load_dotenv
 import openai
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from datetime import datetime
+from PIL import Image
 
 
 class DB:
@@ -65,6 +68,7 @@ class DB:
         if result is None:
             return None
         recipe = {
+                "id": result["_id"],
                 "title": result["Title"],
                 "image": result["Image_Name"],
                 "description": result["Description"],
@@ -79,5 +83,27 @@ class DB:
         return recipe
     
     def addRecipe(self, recipe):
+        # process image if change
+        if recipe["imageFile"] is not None:
+            imageData = recipe["imageData"].split(",")[1]
+            image = Image.open(io.BytesIO(base64.b64decode(imageData)))
+            image.thumbnail((274, 170))
+
+            # store image file on server
+            base_file_name, _ = os.path.splitext(recipe['imageFile'])
+            recipe["Image_Name"] = base_file_name
+            file_name = base_file_name + ".jpg"
+            image.save(os.path.join('static', 'recipe-images', file_name))
+
         recipe["Added"] = datetime.utcnow()
-        self.collection.insert_one(recipe)
+        del recipe["imageData"]
+        del recipe["imageFile"]
+        id = recipe["tempId"]
+        del recipe["tempId"]
+
+        if id == "":
+            self.collection.insert_one(recipe)
+        else:
+            self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})
+        
+

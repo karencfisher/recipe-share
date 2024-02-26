@@ -17,6 +17,10 @@
             border-top: 1px solid var(--border-color);
         }
 
+        .container {
+            margin: 5px 0px 5px 0px;
+        }
+
         div#description-text {
             margin-left: auto;
             margin-right: auto;
@@ -48,12 +52,22 @@
                 </div>
             </section>
 
-            <section id="tags"></section>
+            <section id="tags-label"></section>
                 {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                    <h3 id="'tags">Tags</h3>
                     <div class="container" id="tags-container">
                         {% for tag in recipe.tags %}
                             <div class="tag">{{ tag }}</div>
                         {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+
+            <section id="meta-data"></section>
+                {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                    <h3 id="metalabel">Meta data</h3>
+                    <div>Views: {{ recipe.views }}</div>
+                    <div>Added: {{ recipe.added }} (UTC)</div>
                     </div>
                 {% endif %}
             </section>

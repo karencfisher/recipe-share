@@ -37,7 +37,7 @@ function addItem(textBox, itemClass, parent) {
 
     item.addEventListener("keydown", (e) => {
         // shift+space bar to remove
-        if (e.shiftKey && e.code === "Space") {
+        if (e.key === "Delete") {
             e.preventDefault();
             focusNext(item, textBox);
             item.remove();
@@ -150,6 +150,40 @@ tagText.addEventListener("keypress", (e) => {
     })
 });
 
+/* Image *****************************************/
+const fileInput = document.getElementById("image-file");
+const editImage = document.getElementById("edit-image")
+const imageContainer = document.getElementById("image-container");
+
+function loadImage() {
+    const fileInput = document.getElementById("image-file");
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const image = document.createElement('img');
+        image.src = e.target.result;
+        image.id = "image";
+        image.style.setProperty("width", "100%");
+        fileInput.style.setProperty("display", "none");
+        imageContainer.appendChild(image);
+    }
+    reader.readAsDataURL(file);
+}
+
+editImage.addEventListener("click", () => {
+    imageContainer.innerHTML = "";
+    const newFileInput = document.createElement("input");
+    newFileInput.type = "file";
+    newFileInput.name = "file";
+    newFileInput.id = "image-file";
+    newFileInput.addEventListener("change", () => loadImage());
+    imageContainer.appendChild(newFileInput);
+});
+
+if (fileInput) {
+    fileInput.addEventListener("change", () => loadImage());
+}
+
 /* Save and reset handlers ***********************/
 const backButton = document.getElementById("back-button");
 const resetButton = document.getElementById("reset-button");
@@ -159,15 +193,25 @@ const generateButton = document.getElementById("generate-button");
 
 function buildRecipe(complete) {
     // initialize recipe object
+    const idField = document.getElementById("recipe-id");
     const recipe = {
+        tempId: idField.value,
         Title: titleText.value,
         Ingredients: [],
         Instructions: [],
         Tags: [],
-        Image_Name: "",
+        imageFile: null,
+        imageData: null,
         Views: 0,
         Description: "",
     };
+
+    const fileInput = document.getElementById("image-file");
+    if (fileInput) {
+        recipe.imageFile = fileInput.files[0].name;
+        const image = document.getElementById("image");
+        recipe.imageData = image.src;
+    }
 
     // check title
     if (recipe.Title === "") {
@@ -252,7 +296,16 @@ resetButton.addEventListener("click", () => {
 
 saveButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
-    // submit recipe - TODO
+    fetch('/insert', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(recipe)
+    })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
     
 });
 

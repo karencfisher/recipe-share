@@ -206,13 +206,6 @@ function buildRecipe(complete) {
         Description: "",
     };
 
-    const fileInput = document.getElementById("image-file");
-    if (fileInput) {
-        recipe.imageFile = fileInput.files[0].name;
-        const image = document.getElementById("image");
-        recipe.imageData = image.src;
-    }
-
     // check title
     if (recipe.Title === "") {
         displayMessage("Must have a title!", true);
@@ -243,7 +236,15 @@ function buildRecipe(complete) {
     });
 
     if (complete) {
-        // add instructions
+        // image
+        const fileInput = document.getElementById("image-file");
+        if (fileInput) {
+            recipe.imageFile = fileInput.files[0].name;
+            const image = document.getElementById("image");
+            recipe.imageData = image.src;
+        }
+
+        // add tags
         const tags = [...document.getElementsByClassName("tag")];
         if (tags.length === 0) {
             displayMessage("Must include at least one tag!", true);
@@ -296,17 +297,18 @@ resetButton.addEventListener("click", () => {
 
 saveButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
-    fetch('/insert', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(recipe)
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch(error => console.error('Error:', error));
-    
+    if (recipe != undefined) {
+        fetch('/insert', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recipe)
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
+    }
 });
 
 previewButton.addEventListener("click", () => {
@@ -315,9 +317,19 @@ previewButton.addEventListener("click", () => {
 });
 
 generateButton.addEventListener("click", () => {
+    const descriptionText = document.getElementById("description-text")
     recipe = buildRecipe(false);
     if (recipe != undefined) {
-        // description generation - TODO
+        fetch('/generate', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recipe)
+        })
+        .then(response => response.json())
+        .then(data => descriptionText.value = data.response)
+        .catch(error => console.error('Error:', error));
         displayMessage("ChatGPT has written a description for you! You can edit it as you see fit.", true);
     }
 });

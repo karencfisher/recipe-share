@@ -28,7 +28,7 @@ def generateDescription(recipe):
     ingredients = "\n".join(recipe["Ingredients"])
     prompt = prompt_template.format(title=title, 
                                     ingredients=ingredients, 
-                                    teps=steps)
+                                    steps=steps)
     
     result = openai.ChatCompletion.create(model="gpt-3.5-turbo",
                                        messages=[{"role": "user", "content": prompt}],

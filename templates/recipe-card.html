@@ -37,12 +37,13 @@
         }
     </style>
 </head>
-<body>
+<body class="{{ mode }}"></body>
+
     <header>
         <h1>{{recipe.title}}</h1>
     </header>
     <main>
-        <div class="column" id=left-column">
+        <div class="column" id="left-column">
             <section id="card-description">
                 {% if recipe.image is defined and recipe.image|length > 0 %}
                     <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
@@ -64,12 +65,9 @@
             </section>
 
             <section id="meta-data"></section>
-                {% if recipe.tags is defined and recipe.tags|length > 0 %}
                     <h3 id="metalabel">Meta data</h3>
                     <div>Views: {{ recipe.views }}</div>
                     <div>Added: {{ recipe.added }} (UTC)</div>
-                    </div>
-                {% endif %}
             </section>
         </div>
 
@@ -100,10 +98,6 @@
 
     <footer>
         <div id="choices">
-            <div class="choice" id="theme">
-                <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
-                <label for="darkmode">Dark mode</label>
-            </div>
             <div id="buttons">
                 <button id="back-button" aria-label="back">Back</button>
                 <button id="print-button" aria-label="print">Print</button>

@@ -243,6 +243,9 @@ function buildRecipe(complete) {
             const image = document.getElementById("image");
             recipe.imageData = image.src;
         }
+        else {
+            recipe.imageFile = image.src;
+        }
 
         // add tags
         const tags = [...document.getElementsByClassName("tag")];
@@ -270,31 +273,6 @@ backButton.addEventListener("click", () => {
     history.back();
 });
 
-resetButton.addEventListener("click", () => {
-    // clear title
-    titleText.value = "";
-    titleText.focus();
-
-    // clear ingredients
-    ingredientText.value = "";
-    const ingredients = [...document.getElementsByClassName("ingredient")];
-    ingredients.forEach((item) => item.remove());
-
-    // clear instructions
-    instructionText.value = "";
-    const instructions = [...document.getElementsByClassName("instruction")];
-    instructions.forEach((item) => item.remove());
-
-    // clear tags
-    tagText.value = "";
-    const tags = [...document.getElementsByClassName("tag")];
-    tags.forEach((item) => item.remove());
-
-    // clear description
-    descriptionText.value = "";
-    displayMessage("Form cleared", false);
-});
-
 saveButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
     if (recipe != undefined) {
@@ -306,14 +284,16 @@ saveButton.addEventListener("click", () => {
             body: JSON.stringify(recipe)
         })
         .then(response => response.json())
-        .then(data => console.log(data))
+        .then(data => {
+            if (data.response == 200) {
+                displayMessage("Recipe published successfully", true);
+            }
+            else {
+                displayMessage(`Error occured ${data.response}`);
+            }
+        })
         .catch(error => console.error('Error:', error));
     }
-});
-
-previewButton.addEventListener("click", () => {
-    recipe = buildRecipe(true);
-    // preview recipe - TODO
 });
 
 generateButton.addEventListener("click", () => {
@@ -328,9 +308,12 @@ generateButton.addEventListener("click", () => {
             body: JSON.stringify(recipe)
         })
         .then(response => response.json())
-        .then(data => descriptionText.value = data.response)
+        .then(data => {
+            descriptionText.value = data.response;
+            displayMessage("ChatGPT has written a description for you!", true);
+        })
         .catch(error => console.error('Error:', error));
-        displayMessage("ChatGPT has written a description for you! You can edit it as you see fit.", true);
+        
     }
 });
 
@@ -347,46 +330,3 @@ function displayMessage(message, show) {
     }, 5000);
 }
 
-/*  Manage theme toggle **************************/
-function toggleTheme(obj) {
-    if (obj.checked) {
-        document.body.style.setProperty("--background-color", "rgb(20, 20, 20)");
-        document.body.style.setProperty("--widget-background-color", "rgb(50, 50, 50)");
-        document.body.style.setProperty("--widget-focus-background-color", "rgb(29, 36, 122)");
-        document.body.style.setProperty("--border-color", "rgb(124, 250, 250)");
-        document.body.style.setProperty("--font-color", "rgb(124, 250, 250)");
-        displayMessage("Dark mode enabled", false);
-    }
-    else {
-        document.body.style.setProperty("--background-color", "rgb(255, 255, 255)");
-        document.body.style.setProperty("--widget-background-color", "rgb(230, 213, 213)");
-        document.body.style.setProperty("--widget-focus-background-color", "rgb(238, 193, 97)");
-        document.body.style.setProperty("--border-color", "rgb(124, 15, 15)");
-        document.body.style.setProperty("--font-color", "rgb(124, 15, 15)");
-        displayMessage("Light mode enabled", false);
-    }
-}
-
-const theme = document.getElementById("darkmode");
-
-theme.addEventListener("focus", () => {
-    document.getElementById("theme").style.setProperty("background", "var(--widget-focus-background-color)");
-});
-
-theme.addEventListener("blur", () => {
-    document.getElementById("theme").style.setProperty("background", "var(--widget-background-color)");
-});
-
-theme.addEventListener("click", () => {
-    toggleTheme(theme);
-});
-
-theme.addEventListener("keypress", (e) => {
-    if (e.code === "Enter") {
-        theme.checked = !theme.checked;
-        toggleTheme(theme);
-    }
-    else if (e.code === "Space") {
-        toggleTheme(theme);
-    }
-});

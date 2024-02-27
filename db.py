@@ -84,7 +84,7 @@ class DB:
     
     def addRecipe(self, recipe):
         # process image if change
-        if recipe["imageFile"] is not None:
+        if recipe["imageFile"] is not None and recipe["imageData"] is not None:
             imageData = recipe["imageData"].split(",")[1]
             image = Image.open(io.BytesIO(base64.b64decode(imageData)))
             image.thumbnail((274, 170))

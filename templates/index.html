@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe share - Home</title>
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="./static/home.js" defer></script>
+    <style>
+        a {
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 1rem;
+            color: var(--font-color);
+        }
+
+        h3 {
+            padding-left: 3px;
+        }
+
+        .link {
+            height: 3em;
+        }
+    </style>
+</head>
+<body class="light-mode">
+    <header>
+        <h1>Recipe Share</h1>
+    </header>
+    <main>
+        <div class="column" id="left-column">
+            <section>
+                <h3>
+                    Search
+                </h3>
+                <div class="input-field">
+                    <input class="input" id="search-text" type="text" placeholder="Search text" 
+                        aria-label="search text field">
+                    <button class="add-button" id="search-button" aria-label="Search">Search</button>
+                </div>
+                <div class="container" id="results"></div>
+            </section>
+            <section>
+                <h3><a id="contribute" href="/edit">contribute your own</a></h3>
+            </section>   
+        </div>
+
+        <div class="column" id="right-column">
+            <section>
+                <h3>
+                    Most Recent Contributions
+                </h3>
+                <div class="container" id="recent"></div>
+            </section>
+            <section>
+                <h3>
+                    Most Popular Contributions
+                </h3>
+                <div class="container" id="views"></div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div id="choices">
+            <div class="choice" id="theme">
+                <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
+                <label for="darkmode">Dark mode</label>
+            </div>
+            <div id="buttons">
+                
+            </div>
+        </div>
+    </footer>
+
+    
+</body>
+</html>

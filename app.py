@@ -1,5 +1,9 @@
 from flask import Flask, jsonify, request, render_template
 from urllib.parse import unquote
+from io import BytesIO
+import json
+import os
+
 
 from db import DB
 from description_generator import generateDescription
@@ -12,7 +16,7 @@ db = None
 
 @app.route('/')
 def landing():
-    pass
+    return render_template("index.html")
 
 
 @app.route('/search')
@@ -44,9 +48,10 @@ def queryDb():
         else:
             id = request.args.get("id")
             results = db.query_recipe_by_id(id)
+            mode = request.args.get("mode")
             if results is None:
                 return jsonify({"error": "no data"}), 404
-            return render_template("recipe-card.html", recipe=results)
+            return render_template("recipe-card.html", recipe=results, mode=mode)
         return jsonify(results), 200
     except Exception as ex:
         error_log.log_error(ex)
@@ -57,6 +62,7 @@ def queryDb():
 def edit_recipe():
     global db
     id = request.args.get("id")
+    mode = request.args.get("mode")
     if id is not None:
         try:
             if db is None:
@@ -67,14 +73,7 @@ def edit_recipe():
             return jsonify({"error": "Internal server error"}), 500
     else:
         recipe = {"title": "", "description": ""}
-    return render_template("recipe-editor.html", recipe=recipe)
-
-
-@app.route('/preview', methods=['POST'])
-def preview_recipe():
-    if not request.is_json:
-        return jsonify({"response": 403}), 403
-    return render_template("recipe-card.html", recipe=request.json)
+    return render_template("recipe-editor.html", recipe=recipe, mode=mode)
 
 
 @app.route('/insert', methods=['POST'])

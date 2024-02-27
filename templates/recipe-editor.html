@@ -59,7 +59,7 @@
         }
     </script>
 </head>
-<body>
+<body class="{{ mode }}">
     <header>
         <h1>Recipe Editor</h1>
     </header>
@@ -167,15 +167,9 @@
 
     <footer>
         <div id="choices">
-            <div class="choice" id="theme">
-                <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
-                <label for="darkmode">Dark mode</label>
-            </div>
             <div id="buttons">
                 <button id="back-button" aria-label="back">Back</button>
-                <button id="reset-button" aria-label="reset form">Reset</button>
-                <button id="preview-button" aria-label="preview recipe">Preview</button>
-                <button id="save-button" aria-label="save recipe">Save</button>
+                <button id="save-button" aria-label="publish recipe">Publish</button>
             </div>
         </div>
     </footer>

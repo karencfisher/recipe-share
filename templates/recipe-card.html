@@ -44,34 +44,12 @@
     </header>
     <main>
         <div class="column" id="left-column">
-            <section id="card-description">
+            <section id="image">
                 {% if recipe.image is defined and recipe.image|length > 0 %}
                     <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
                 {% endif %}
-                <div id="description-text">
-                    {{recipe.description}}
-                </div>
             </section>
 
-            <section id="tags-label"></section>
-                {% if recipe.tags is defined and recipe.tags|length > 0 %}
-                    <h3 id="'tags">Tags</h3>
-                    <div class="container" id="tags-container">
-                        {% for tag in recipe.tags %}
-                            <div class="tag">{{ tag }}</div>
-                        {% endfor %}
-                    </div>
-                {% endif %}
-            </section>
-
-            <section id="meta-data"></section>
-                    <h3 id="metalabel">Meta data</h3>
-                    <div>Views: {{ recipe.views }}</div>
-                    <div>Added: {{ recipe.added }} (UTC)</div>
-            </section>
-        </div>
-
-        <div class="column" id="right-column">
             <section class="recipe-card" id="ingredients">
                 <h3>
                     Ingredients
@@ -94,15 +72,38 @@
                 </ol>
             </section>
         </div>
+
+        <div class="column" id="right-column">
+            <section>
+                <div id="description-text">
+                    {{recipe.description}}
+                </div>
+            </section>
+            
+            <section id="tags-label"></section>
+                {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                    <h3 id="'tags">Tags</h3>
+                    <div class="container" id="tags-container">
+                        {% for tag in recipe.tags %}
+                            <div class="tag">{{ tag }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+
+            <section id="meta-data"></section>
+                    <h3 id="metalabel">Meta data</h3>
+                    <div>Views: {{ recipe.views }}</div>
+                    <div>Added: {{ recipe.added }} (UTC)</div>
+            </section>
+        </div>
     </main>
 
     <footer>
         <div id="choices">
-            <div id="buttons">
-                <button id="back-button" aria-label="back">Back</button>
-                <button id="print-button" aria-label="print">Print</button>
-                <button id="download-button" aria-label="download">Download</button>
-            </div>
+            <button id="back-button" aria-label="back">Back</button>
+            <button id="print-button" aria-label="print">Print</button>
+            <button id="download-button" aria-label="download">Download</button>
         </div>
     </footer>
 

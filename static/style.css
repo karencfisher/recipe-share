@@ -189,27 +189,9 @@ img {
 
 #choices {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 5px;
     align-content: center;
-}
-
-#theme {
-    flex: 1;
-    align-self: center;
-    border-style: groove;
-    border-color: var(--border-color);
-    border-radius: 10px;
-    border-width: 2px;
-    color: var(--font-color);
-    background: var(--widget-background-color);
-    height: 2rem;
-    margin-right: 5px;
-    padding: 2px;
-    align-self: center;
-}
-
-#theme > input {
-    margin: 5px;        
 }
 
 #error-message {

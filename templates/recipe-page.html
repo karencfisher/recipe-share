@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe share - {{recipe.title}}</title>
+    <link rel="stylesheet" href="../static/style.css" />
+    <script src="./static/recipe-page.js" defer></script>
+        <style>
+        .container {
+            margin-top: 20px;
+        }
+
+        h3 {
+            margin-top: 0px;
+            margin-bottom: 5px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .container {
+            margin: 5px 0px 5px 0px;
+        }
+
+        div#description-text {
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-style: solid;
+            border-radius: 10px;
+            border-width: 1px;
+            border-color: var(--border-color);
+        }
+
+        div#description-text::first-line{
+            font-weight:bold
+        }
+    </style>
+</head>
+<body class="{{ mode }}"></body>
+    <input id="recipe-id" type="hidden" value="{{ recipe.id }}">
+    <header>
+        <h1>{{recipe.title}}</h1>
+    </header>
+    <main id="main">
+        <div class="column" id="left-column">
+            <section id="image">
+                {% if recipe.image is defined and recipe.image|length > 0 %}
+                    <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
+                {% endif %}
+            </section>
+
+            <section class="recipe-card" id="ingredients">
+                <h3>
+                    Ingredients
+                </h3>
+                <ul>
+                    {% for ingredient in recipe.ingredients %}
+                        <li>{{ ingredient }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+            
+            <section class="recipe-card" id="instructions">
+                <h3>
+                    Instructions
+                </h3>
+                <ol>
+                    {% for instruction in recipe.instructions %}
+                        <li>{{ instruction }}</li>
+                    {% endfor %}
+                </ol>
+            </section>
+        </div>
+
+        <div class="column" id="right-column">
+            <section>
+                <div id="description-text">
+                    {{recipe.description}}
+                </div>
+            </section>
+
+            <section id="tags-label"></section>
+                {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                    <h3 id="'tags">Tags</h3>
+                    <div class="container" id="tags-container">
+                        {% for tag in recipe.tags %}
+                            <div class="tag">{{ tag }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+
+            <section id="meta-data"></section>
+                    <h3 id="metalabel">Meta data</h3>
+                    <div>Views: {{ recipe.views }}</div>
+                    <div>Added: {{ recipe.added }} (UTC)</div>
+            </section>
+        </div>
+    </main>
+
+    <footer>
+        <div id="choices">
+            <button id="back-button" aria-label="back">Back</button>
+            <button id="print-button" aria-label="printable recipe">Printable recipe</button>
+        </div>
+    </footer>
+
+    
+</body>
+</html>

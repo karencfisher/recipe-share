@@ -63,11 +63,11 @@
     <header>
         <h1>Recipe Editor</h1>
     </header>
-    <main>
+    <main id="main">
         {% if recipe.id is defined and recipe.id != "" %}
-        <input id="recipe-id" type="hidden" value="{{ recipe.id }}">
+            <input id="recipe-id" type="hidden" value="{{ recipe.id }}">
         {% else %}
-        <input id="recipe-id" type="hidden" value="">
+            <input id="recipe-id" type="hidden" value="">
         {% endif %}
         
         <div class="column" id="left-column">

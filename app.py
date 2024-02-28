@@ -51,7 +51,7 @@ def queryDb():
             mode = request.args.get("mode")
             if results is None:
                 return jsonify({"error": "no data"}), 404
-            return render_template("recipe-card.html", recipe=results, mode=mode)
+            return render_template("recipe-page.html", recipe=results, mode=mode)
         return jsonify(results), 200
     except Exception as ex:
         error_log.log_error(ex)
@@ -102,6 +102,20 @@ def generate_description():
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
 
+
+@app.route('/printable')
+def printable_card():
+    id = request.args.get("id")
+    global db
+    try:
+        if db is None:
+            db = DB()
+        recipe = db.query_recipe_by_id(id)
+        return render_template("recipe-card.html", recipe=recipe)
+    except Exception as ex:
+        error_log.log_error(ex)
+        return jsonify({"error": "Internal server error"}), 500
+    
 
 if __name__ == "__main__":
     error_log = ErrorLog()

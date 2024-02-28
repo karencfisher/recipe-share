@@ -5,12 +5,14 @@ document.getElementById("back-button").addEventListener("click", () => {
 const printButton = document.getElementById("print-button");
 printButton.addEventListener("click", () => {
     const noPrint = [...document.getElementsByClassName("no-print")];
+    const property = [];
     noPrint.forEach((item) => {
+        property.push(item.style.getPropertyValue("display"));
         item.style.setProperty("display", "none");
     });
     window.print();
     noPrint.forEach((item) => {
-        item.style.setProperty("display", "flex");
+        item.style.setProperty("display", property.shift());
     });
 });
 

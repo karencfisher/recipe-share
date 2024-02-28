@@ -59,6 +59,7 @@ img {
     border-bottom-style: solid;
     border-bottom-width: 1px;
     border-bottom-color: black;
+    padding: 5px;
 }
 
 #buttons {

@@ -9,7 +9,7 @@
     <style>
         a {
             font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-            font-size: 1rem;
+            font-size: .8rem;
             color: var(--font-color);
         }
 
@@ -17,8 +17,16 @@
             padding-left: 3px;
         }
 
+        span {
+            font-size: .8rem;
+        }
+
         .link {
             height: 3em;
+        }
+
+        #contribute {
+            min-height: 0px;
         }
     </style>
 </head>
@@ -40,7 +48,14 @@
                 <div class="container" id="results"></div>
             </section>
             <section>
-                <h3><a id="contribute" href="/edit">contribute your own</a></h3>
+                <h3>Contribute your own recipe!</h3>
+                <div class="container" id="contribute">
+                    This is the fun part! Professional, Amateur chef, or wannabe? Share your culinary 
+                    expolit with the world. Open the Recipe Editor clicking below
+                    <button id="contribute-button">I want to contribute!</button>
+                </div>
+                
+
             </section>   
         </div>
 

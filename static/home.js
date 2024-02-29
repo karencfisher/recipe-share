@@ -4,7 +4,18 @@ function loadRecipes(container, data) {
     data.forEach((item) => {
         element = document.createElement("div");
         element.classList.add("link");
-        html = `<a href=\"/search?id=${item.id}\">${item.title}</a>`;
+        const titleWords = item.title.split(" ");
+
+        let title = "";
+        if (titleWords.length > 7) {
+            title = titleWords.slice(0, 6).join(" ") + "...";
+        }
+        else {
+            title = titleWords.join(" ");
+        }
+
+        html = `<a href=\"/search?id=${item.id}\">${title}</a><br /> 
+            <span id="views">${item.views} views</span>`;
         element.innerHTML = html;
         element.querySelector("a").addEventListener("click", (e) => {
             e.preventDefault();
@@ -45,7 +56,7 @@ searchButton.addEventListener("click", () => {
 
 searchText.addEventListener("keypress", (e) => {
     if (e.code === "Enter") {
-        fetch(`/search?method=semantic&query=${searchText.value}&max_found=5`, {
+        fetch(`/search?method=semantic&query=${searchText.value}&max_found=10`, {
             method: 'GET'
         })
         .then(response => response.json())
@@ -54,20 +65,9 @@ searchText.addEventListener("keypress", (e) => {
     }
 });
 
-const links = [...document.getElementsByTagName("a")];
-links.forEach((item) => {
-    item.addEventListener("click", (e) => {
-        e.preventDefault();
-        let uri = e.target.getAttribute("href")
-        if (e.target.id === "contribute") {
-             uri += "?";
-        }
-        else {
-            uri += "&";
-        }
-        uri += `mode=${document.body.className}`
-        location.href = uri;
-    });
+const contributeButton = document.getElementById("contribute-button");
+contributeButton.addEventListener("click", () =>{
+    location.href = `/edit?mode=${document.body.className}`
 });
 
 function toggleTheme(obj) {

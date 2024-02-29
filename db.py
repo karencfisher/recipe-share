@@ -47,6 +47,9 @@ class DB:
                     "numCandidates": 50,
                     "limit": max_found,
                 }
+            },
+            {
+                '$sort': {"Views": -1}
             }
         ])
         return self.__extract_results(results)

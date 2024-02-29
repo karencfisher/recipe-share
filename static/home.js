@@ -46,7 +46,7 @@ const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("search-text");
 
 searchButton.addEventListener("click", () => {
-    fetch(`/search?method=semantic&query=${searchText.value}&max_found=5`, {
+    fetch(`/search?method=semantic&query=${searchText.value}&max_found=10`, {
         method: 'GET'
     })
     .then(response => response.json())

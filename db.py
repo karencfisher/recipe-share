@@ -45,11 +45,13 @@ class DB:
                     "path": "recipe_embedding",
                     "queryVector": self.__generate_embedding(query),
                     "numCandidates": 50,
-                    "limit": max_found,
+                    "limit": max_found
                 }
             },
             {
-                '$sort': {"Views": -1}
+                '$sort': {
+                    "Views": -1
+                }
             }
         ])
         return self.__extract_results(results)

@@ -50,6 +50,14 @@
                 {% endif %}
             </section>
 
+            <section>
+                <div id="description-text">
+                    {{recipe.description}}
+                </div>
+            </section>
+        </div>
+
+        <div class="column" id="right-column">
             <section class="recipe-card" id="ingredients">
                 <h3>
                     Ingredients
@@ -70,14 +78,6 @@
                         <li>{{ instruction }}</li>
                     {% endfor %}
                 </ol>
-            </section>
-        </div>
-
-        <div class="column" id="right-column">
-            <section>
-                <div id="description-text">
-                    {{recipe.description}}
-                </div>
             </section>
 
             <section id="tags-label"></section>

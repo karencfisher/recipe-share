@@ -238,10 +238,12 @@ function buildRecipe(complete) {
     if (complete) {
         // image
         const fileInput = document.getElementById("image-file");
+        const image = document.getElementById("image");
         if (fileInput) {
-            recipe.imageFile = fileInput.files[0].name;
-            const image = document.getElementById("image");
-            recipe.imageData = image.src;
+            if (fileInput.files.length > 0) {
+                recipe.imageFile = fileInput.files[0].name;
+                recipe.imageData = image.src;
+            }
         }
         else {
             recipe.imageFile = image.src;

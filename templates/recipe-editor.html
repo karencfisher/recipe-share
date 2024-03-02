@@ -135,7 +135,9 @@
                     <button class="add-button" id="edit-image">Edit image</button>
                 </div>
                 <div class="container" id="image-container">
-                    {% if recipe.image is defined and recipe.image != "" %}
+                    {% if recipe.imageData is defined and recipe.imageData != None %}
+                        <img id="image" src="{{ recipe.imageData }}" alt="{{ recipe.image }}">
+                    {% elif recipe.image is defined and recipe.image != None %}
                         <img id="image" src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
                     {% else %}
                         <input type="file" name="file" id="image-file" />

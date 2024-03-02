@@ -45,7 +45,9 @@
     <main id="main">
         <div class="column" id="left-column">
             <section id="image">
-                {% if recipe.image is defined and recipe.image|length > 0 %}
+                {% if recipe.imageData is defined and recipe.imageData != None %}
+                    <img src="{{ recipe.imageData }}" alt="{{ recipe.image }}">
+                {% elif recipe.image is defined and recipe.image != None %}
                     <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
                 {% endif %}
             </section>

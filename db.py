@@ -9,12 +9,17 @@ from datetime import datetime
 from PIL import Image
 
 
+TEST = True
+
 class DB:
     def __init__(self):
         load_dotenv()
         password = os.getenv("MONGODB_PASSWORD")
         url = os.getenv("MONGODB_URL")
-        CONNECTION_STRING = f"mongodb+srv://karen:{password}@{url}/recipe-share"
+        if TEST:
+            CONNECTION_STRING = f"mongodb://localhost:27017/recipe-share"
+        else:
+            CONNECTION_STRING = f"mongodb+srv://karen:{password}@{url}/recipe-share"
         client = MongoClient(CONNECTION_STRING)
         db = client.get_database()
         self.collection = db.get_collection("recipes")
@@ -49,8 +54,14 @@ class DB:
                 }
             },
             {
-                '$sort': {
-                    "Views": -1
+                "$project": {
+                    "_id": 1,
+                    "Title": 1,
+                    "Views": 1,
+                    "Added": 1,
+                    "score": {
+                        "$meta": "vectorSearchScore"
+                    }
                 }
             }
         ])
@@ -75,14 +86,17 @@ class DB:
         recipe = {
                 "id": result["_id"],
                 "title": result["Title"],
-                "image": result["Image_Name"],
+                "image": result.get("Image_Name"),
+                "imageData": result.get("imageData"),
                 "description": result["Description"],
                 "views": result["Views"] + 1,
                 "ingredients": result["Ingredients"],
                 "instructions": result["Instructions"],
                 "tags": result["Tags"],
-                "added": result['Added'].strftime('%a %d %b %Y, %I:%M%p')
+                "added": result['Added'].strftime('%a %d %b %Y, %I:%M%p'),
+                "published": result.get("Published", False)
             }
+        
         self.collection.update_one({"_id": ObjectId(id)}, 
                                    {"$set": {"Views": recipe["views"]}})
         return recipe
@@ -90,18 +104,28 @@ class DB:
     def addRecipe(self, recipe):
         # process image if change
         if recipe["imageFile"] is not None and recipe["imageData"] is not None:
-            imageData = recipe["imageData"].split(",")[1]
-            image = Image.open(io.BytesIO(base64.b64decode(imageData)))
-            image.thumbnail((274, 170))
+            # unpack imageData
+            _, data = recipe["imageData"].split(",")
 
-            # store image file on server
+            # open as image and resize
+            image = Image.open(io.BytesIO(base64.b64decode(data)))
+            image = image.resize((274, 170))
+
+            # re-encode image
+            header = "data:image/jpeg;base64"
+            buffer = io.BytesIO()
+            image.save(buffer, format="JPEG")
+            image_str = base64.b64encode(buffer.getvalue()).decode('ascii')
+            recipe["imageData"] = ",".join([header, image_str.strip()])
+
             base_file_name, _ = os.path.splitext(recipe['imageFile'])
             recipe["Image_Name"] = base_file_name
-            file_name = base_file_name + ".jpg"
-            image.save(os.path.join('static', 'recipe-images', file_name))
+        else:
+            # no image change, so don't update field
+            del recipe["imageData"]
 
         recipe["Added"] = datetime.utcnow()
-        del recipe["imageData"]
+        recipe["Published"] = False
         del recipe["imageFile"]
         id = recipe["tempId"]
         del recipe["tempId"]

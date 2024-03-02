@@ -13,8 +13,10 @@
     <main id="main">
         <div id="card-title"><h1>{{ recipe.title }}</h1></div>
         <div id="description">
-            {% if recipe.image is defined and recipe.image !="" %}
-                <img src="../static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
+            {% if recipe.imageData is defined and recipe.imageData != None %}
+                <img src="{{ recipe.imageData }}" alt="{{ recipe.image }}">
+            {% elif recipe.image is defined and recipe.image != None %}
+                <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
             {% endif %}
             {{ recipe.description}}
         </div>

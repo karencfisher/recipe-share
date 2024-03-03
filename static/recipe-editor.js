@@ -194,7 +194,7 @@ function buildRecipe(complete) {
     // initialize recipe object
     const idField = document.getElementById("recipe-id");
     const recipe = {
-        tempId: idField.value,
+        _id: idField.value,
         Title: titleText.value,
         Ingredients: [],
         Instructions: [],
@@ -266,7 +266,6 @@ function buildRecipe(complete) {
             return;
         }
         recipe.Description = descriptionText.value;
-        recipe.Published = (document.getElementById("published").value.toLowerCase() === 'true');
     }
     return recipe;
 }
@@ -278,7 +277,7 @@ backButton.addEventListener("click", () => {
 previewButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
     if (recipe != undefined) {
-        fetch('/insert', {
+        fetch('/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -288,7 +287,7 @@ previewButton.addEventListener("click", () => {
         .then(response => response.json())
         .then(data => {
             if (data.response == 200) {
-                location.href = `/search?id=${data.id}&preview=true&mode=${document.body.className}`;
+                location.href = `/preview?mode=${document.body.className}`;
             }
             else {
                 displayMessage(`Error occured ${data.response}`);

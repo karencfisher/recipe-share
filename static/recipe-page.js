@@ -4,21 +4,20 @@ document.getElementById("back-button").addEventListener("click", () => {
 
 const printButton = document.getElementById("print-button");
 printButton.addEventListener("click", () =>{
-    const idField = document.getElementById("recipe-id");
-    location.href = `/printable?id=${idField.value}`;
+    location.href = "/printable";
 });
 
 const publishButton = document.getElementById("publish-button");
 if (publishButton) {
     publishButton.addEventListener("click", () => {
-        const id = document.getElementById("recipe-id").value;
-        fetch(`/publish?id=${id}`, {
+        fetch("/publish", {
             method: 'GET'
         })
         .then(response => response.json())
         .then(data => {
             if (data.response == 200) {
                 displayMessage("Recipe published!", true)
+                publishButton.style.setProperty("display", "none")
             }
         })
         .catch(error => console.error('Error:', error));

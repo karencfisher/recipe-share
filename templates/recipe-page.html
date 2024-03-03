@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe share - {{recipe.title}}</title>
+    <title>Recipe share - {{recipe.Title}}</title>
     <link rel="stylesheet" href="../static/style.css" />
     <script src="./static/recipe-page.js" defer></script>
         <style>
@@ -38,23 +38,22 @@
     </style>
 </head>
 <body class="{{ mode }}"></body>
-    <input id="recipe-id" type="hidden" value="{{ recipe.id }}">
     <header>
-        <h1>{{recipe.title}}</h1>
+        <h1>{{recipe.Title}}</h1>
     </header>
     <main id="main">
         <div class="column" id="left-column">
             <section id="image">
                 {% if recipe.imageData is defined and recipe.imageData != None %}
-                    <img src="{{ recipe.imageData }}" alt="{{ recipe.image }}">
-                {% elif recipe.image is defined and recipe.image != None %}
-                    <img src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
+                    <img src="{{ recipe.imageData }}" alt="{{ recipe.Image_Name }}">
+                {% elif recipe.Image_Name is defined and recipe.Image_Name != None %}
+                    <img src="./static/recipe-images/{{ recipe.Image_Name }}.jpg" alt="{{ recipe.image }}">
                 {% endif %}
             </section>
 
             <section>
                 <div id="description-text">
-                    {{recipe.description}}
+                    {{recipe.Description}}
                 </div>
             </section>
         </div>
@@ -65,7 +64,7 @@
                     Ingredients
                 </h3>
                 <ul>
-                    {% for ingredient in recipe.ingredients %}
+                    {% for ingredient in recipe.Ingredients %}
                         <li>{{ ingredient }}</li>
                     {% endfor %}
                 </ul>
@@ -76,17 +75,17 @@
                     Instructions
                 </h3>
                 <ol>
-                    {% for instruction in recipe.instructions %}
+                    {% for instruction in recipe.Instructions %}
                         <li>{{ instruction }}</li>
                     {% endfor %}
                 </ol>
             </section>
 
             <section id="tags-label"></section>
-                {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                {% if recipe.Tags is defined and recipe.Tags|length > 0 %}
                     <h3 id="'tags">Tags</h3>
                     <div class="container" id="tags-container">
-                        {% for tag in recipe.tags %}
+                        {% for tag in recipe.Tags %}
                             <div class="tag">{{ tag }}</div>
                         {% endfor %}
                     </div>
@@ -95,8 +94,8 @@
 
             <section id="meta-data"></section>
                     <h3 id="metalabel">Meta data</h3>
-                    <div>Views: {{ recipe.views }}</div>
-                    <div>Added: {{ recipe.added }} (UTC)</div>
+                    <div>Views: {{ recipe.Views }}</div>
+                    <div>Added: {{ recipe.Added }} (UTC)</div>
             </section>
         </div>
         <div id="error-message" aria-live="assertive"></div>
@@ -105,7 +104,7 @@
     <footer>
         <div id="choices">
             <button id="back-button" aria-label="back">Back</button>
-            {% if preview == "true" %}
+            {% if preview == True %}
                 <button id="publish-button" aria-label="publish recipe">Publish</button>
             {% endif %}
             <button id="print-button" aria-label="printable recipe">Printable recipe</button>

@@ -84,59 +84,28 @@ class DB:
         if result is None:
             return None
         recipe = {
-                "id": result["_id"],
-                "title": result["Title"],
-                "image": result.get("Image_Name"),
+                "_id": result["_id"],
+                "Title": result["Title"],
+                "Image_Name": result.get("Image_Name"),
                 "imageData": result.get("imageData"),
-                "description": result["Description"],
-                "views": result["Views"] + 1,
-                "ingredients": result["Ingredients"],
-                "instructions": result["Instructions"],
-                "tags": result["Tags"],
-                "added": result['Added'].strftime('%a %d %b %Y, %I:%M%p'),
-                "published": result.get("Published", False)
+                "Description": result["Description"],
+                "Views": result["Views"] + 1,
+                "Ingredients": result["Ingredients"],
+                "Instructions": result["Instructions"],
+                "Tags": result["Tags"],
+                "Added": result['Added']
             }
         
         self.collection.update_one({"_id": ObjectId(id)}, 
-                                   {"$set": {"Views": recipe["views"]}})
+                                   {"$set": {"Views": recipe["Views"]}})
         return recipe
     
-    def addRecipe(self, recipe):
-        # process image if change
-        if recipe["imageFile"] is not None and recipe["imageData"] is not None:
-            # unpack imageData
-            _, data = recipe["imageData"].split(",")
-
-            # open image and resize
-            image = Image.open(io.BytesIO(base64.b64decode(data)))
-            image = image.resize((274, 170))
-
-            # re-encode image as jpeg
-            header = "data:image/jpeg;base64"
-            buffer = io.BytesIO()
-            image.save(buffer, format="JPEG")
-            image_str = base64.b64encode(buffer.getvalue()).decode('ascii')
-            recipe["imageData"] = ",".join([header, image_str.strip()])
-
-            # file name
-            base_file_name, _ = os.path.splitext(recipe['imageFile'])
-            recipe["Image_Name"] = base_file_name
-        else:
-            # no image change, so don't update field
-            del recipe["imageData"]
-
-        recipe["Added"] = datetime.utcnow()
-        del recipe["imageFile"]
-        id = recipe["tempId"]
-        del recipe["tempId"]
-
-        if id == "":
+    def writeRecipe(self, recipe):
+        id = recipe.get("_id")
+        if id is None:
             result = self.collection.insert_one(recipe)
-            id = str(result.inserted_id)
         else:
+            del recipe["_id"]
             self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})
-        return id
-        
-    def publishRecipe(self, id):
-        self.collection.update_one({"_id": ObjectId(id)}, {"$set": {"Published": True}})
+            recipe["_id"] = ObjectId(id)
 

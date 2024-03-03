@@ -188,6 +188,7 @@ if (fileInput) {
 const backButton = document.getElementById("back-button");
 const resetButton = document.getElementById("reset-button");
 const previewButton = document.getElementById("preview-button");
+const publishButton = document.getElementById("publish-button");
 const generateButton = document.getElementById("generate-button");
 
 function buildRecipe(complete) {
@@ -288,6 +289,38 @@ previewButton.addEventListener("click", () => {
         .then(data => {
             if (data.response == 200) {
                 location.href = `/preview?mode=${document.body.className}`;
+            }
+            else {
+                displayMessage(`Error occured ${data.response}`);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+publishButton.addEventListener("click", () => {
+    recipe = buildRecipe(true);
+    if (recipe != undefined) {
+        fetch('/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recipe)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.response == 200) {
+                fetch("/publish", {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.response == 200) {
+                        displayMessage("Recipe published!", true)
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
             else {
                 displayMessage(`Error occured ${data.response}`);

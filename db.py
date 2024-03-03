@@ -102,7 +102,7 @@ class DB:
     
     def writeRecipe(self, recipe):
         id = recipe.get("_id")
-        if id is None:
+        if id is None or id == "":
             result = self.collection.insert_one(recipe)
         else:
             del recipe["_id"]

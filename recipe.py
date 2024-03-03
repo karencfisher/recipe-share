@@ -29,7 +29,7 @@ class Recipe:
         return self.__recipe
     
     def update_recipe(self, recipe):
-        if recipe["imageFile"] is not None and recipe["imageData"] is not None:
+        if recipe["imageData"] is not None:
             # unpack imageData
             _, data = recipe["imageData"].split(",")
 
@@ -43,13 +43,15 @@ class Recipe:
             image.save(buffer, format="JPEG")
             image_str = base64.b64encode(buffer.getvalue()).decode('ascii')
             recipe["imageData"] = ",".join([header, image_str.strip()])
-
-            # file name
-            base_file_name, _ = os.path.splitext(recipe['imageFile'])
-            recipe["Image_Name"] = base_file_name
         else:
             # no image change, so don't update field
             del recipe["imageData"]
+
+        if recipe["imageFile"] is not None:
+            # file name
+            file_name = os.path.basename(recipe['imageFile'])
+            base_file_name, _ = os.path.splitext(file_name)
+            recipe["Image_Name"] = base_file_name
 
         recipe["Added"] = datetime.utcnow()
         del recipe["imageFile"]

@@ -98,15 +98,11 @@
                     <div>Added: {{ recipe.Added }} (UTC)</div>
             </section>
         </div>
-        <div id="error-message" aria-live="assertive"></div>
     </main>
 
     <footer>
         <div id="choices">
             <button id="back-button" aria-label="back">Back</button>
-            {% if preview == True %}
-                <button id="publish-button" aria-label="publish recipe">Publish</button>
-            {% endif %}
             <button id="print-button" aria-label="printable recipe">Printable recipe</button>
         </div>
     </footer>

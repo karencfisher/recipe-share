@@ -107,17 +107,18 @@ class DB:
             # unpack imageData
             _, data = recipe["imageData"].split(",")
 
-            # open as image and resize
+            # open image and resize
             image = Image.open(io.BytesIO(base64.b64decode(data)))
             image = image.resize((274, 170))
 
-            # re-encode image
+            # re-encode image as jpeg
             header = "data:image/jpeg;base64"
             buffer = io.BytesIO()
             image.save(buffer, format="JPEG")
             image_str = base64.b64encode(buffer.getvalue()).decode('ascii')
             recipe["imageData"] = ",".join([header, image_str.strip()])
 
+            # file name
             base_file_name, _ = os.path.splitext(recipe['imageFile'])
             recipe["Image_Name"] = base_file_name
         else:
@@ -125,14 +126,17 @@ class DB:
             del recipe["imageData"]
 
         recipe["Added"] = datetime.utcnow()
-        recipe["Published"] = False
         del recipe["imageFile"]
         id = recipe["tempId"]
         del recipe["tempId"]
 
         if id == "":
-            self.collection.insert_one(recipe)
+            result = self.collection.insert_one(recipe)
+            id = str(result.inserted_id)
         else:
             self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})
+        return id
         
+    def publishRecipe(self, id):
+        self.collection.update_one({"_id": ObjectId(id)}, {"$set": {"Published": True}})
 

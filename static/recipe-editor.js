@@ -187,7 +187,6 @@ if (fileInput) {
 /* Save and reset handlers ***********************/
 const backButton = document.getElementById("back-button");
 const resetButton = document.getElementById("reset-button");
-const saveButton = document.getElementById("save-button");
 const previewButton = document.getElementById("preview-button");
 const generateButton = document.getElementById("generate-button");
 
@@ -267,6 +266,7 @@ function buildRecipe(complete) {
             return;
         }
         recipe.Description = descriptionText.value;
+        recipe.Published = (document.getElementById("published").value.toLowerCase() === 'true');
     }
     return recipe;
 }
@@ -275,7 +275,7 @@ backButton.addEventListener("click", () => {
     history.back();
 });
 
-saveButton.addEventListener("click", () => {
+previewButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
     if (recipe != undefined) {
         fetch('/insert', {
@@ -288,7 +288,7 @@ saveButton.addEventListener("click", () => {
         .then(response => response.json())
         .then(data => {
             if (data.response == 200) {
-                displayMessage("Recipe published successfully", true);
+                location.href = `/search?id=${data.id}&preview=true&mode=${document.body.className}`;
             }
             else {
                 displayMessage(`Error occured ${data.response}`);
@@ -315,7 +315,6 @@ generateButton.addEventListener("click", () => {
             displayMessage("ChatGPT has written a description for you!", true);
         })
         .catch(error => console.error('Error:', error));
-        
     }
 });
 

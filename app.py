@@ -49,9 +49,10 @@ def queryDb():
             id = request.args.get("id")
             results = db.query_recipe_by_id(id)
             mode = request.args.get("mode")
+            preview = request.args.get("preview")
             if results is None:
                 return jsonify({"error": "no data"}), 404
-            return render_template("recipe-page.html", recipe=results, mode=mode)
+            return render_template("recipe-page.html", recipe=results, mode=mode, preview=preview)
         return jsonify(results), 200
     except Exception as ex:
         error_log.log_error(ex)
@@ -84,7 +85,20 @@ def insert_db():
     try:
         if db is None:
             db = DB()
-        db.addRecipe(request.json)
+        id = db.addRecipe(request.json)
+        return jsonify({"id": id, "response": 200}), 200
+    except Exception as ex:
+        error_log.log_error(ex)
+        return jsonify({"error": "Internal server error"}), 500
+    
+@app.route('/publish')
+def publish_recipe():
+    id = request.args.get("id")
+    global db
+    try:
+        if db is None:
+            db = DB()
+        db.publishRecipe(id)
         return jsonify({"response": 200}), 200
     except Exception as ex:
         error_log.log_error(ex)

@@ -69,6 +69,12 @@
         {% else %}
             <input id="recipe-id" type="hidden" value="">
         {% endif %}
+
+        {% if recipe.published is defined %}
+            <input id="published" type="hidden" value="{{ recipe.published }}">
+        {% else %}
+            <input id="published" type="hidden" value="false">
+        {% endif %}
         
         <div class="column" id="left-column">
             <section id="recipe-title">
@@ -170,7 +176,7 @@
     <footer>
         <div id="choices">
             <button id="back-button" aria-label="back">Back</button>
-            <button id="save-button" aria-label="publish recipe">Publish</button>
+            <button id="preview-button" aria-label="preview recipe">Preview</button>
         </div>
     </footer>
 

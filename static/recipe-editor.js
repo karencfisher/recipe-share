@@ -51,8 +51,10 @@ function addItem(textBox, itemClass, parent) {
         }
         else if (e.key === "ArrowDown") {
             e.preventDefault();
-            parent.insertBefore(item, item.nextElementSibling.nextElementSibling)
-            item.focus();
+            if (item.nextElementSibling) {
+                parent.insertBefore(item, item.nextElementSibling.nextElementSibling);
+                item.focus();
+            }
         }
         else if (e.key === "Insert") {
             newItem = addItem(textBox, itemClass, parent);
@@ -370,3 +372,15 @@ function displayMessage(message, show) {
     }, 5000);
 }
 
+const helpButton = document.getElementById("help-button");
+helpButton.addEventListener("click", (e) => {
+    const help = document.getElementById("help");
+    if (e.target.innerHTML === "Show editing help") {
+        help.style.setProperty("display", "block");
+        e.target.innerHTML = "Hide editing help";
+    }
+    else {
+        help.style.setProperty("display", "none");
+        e.target.innerHTML = "Show editing help";
+    }
+});

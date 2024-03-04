@@ -23,7 +23,7 @@ def landing():
             error_log = ErrorLog()
     if recipe_object is None:
             recipe_object = Recipe()
-            
+
     return render_template("index.html")
 
 

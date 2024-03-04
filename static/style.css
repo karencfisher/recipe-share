@@ -46,6 +46,11 @@ button:focus {
     background: var(--widget-focus-background-color);
 }
 
+button#help-button {
+    height: 1.2rem;
+    font-size: .7rem;
+}
+
 header {
     width: calc(var(--region-width) + 20px);
     display: flex;
@@ -142,6 +147,10 @@ img {
     border-color: var(--border-color);
     margin: 5px 0px 30px 0px;
     padding: 5px 5px 5px 5px;
+}
+
+.container#help {
+    font-size: .9rem;
 }
 
 .container#tags-container {

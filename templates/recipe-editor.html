@@ -41,8 +41,10 @@
                 }
                 else if (e.key === "ArrowDown") {
                     e.preventDefault();
-                    contain.insertBefore(item, item.nextElementSibling.nextElementSibling);
-                    item.focus();
+                    if (item.nextElementSibling) {
+                        contain.insertBefore(item, item.nextElementSibling.nextElementSibling);
+                        item.focus();
+                    }
                 }
                 else if (e.key === "Insert") {
                     newItem = addItem(textBox, textName, contain);
@@ -79,6 +81,35 @@
             </section>
 
             <section id="ingredients">
+                <div>
+                    <button id="help-button">Show editing help</button>
+                    <div class="container" id="help" style="display: none;">
+                        <p>
+                            Ingredients, Instructions, and Tags editing:
+                            <ul>
+                                <li>Add button adds a cell</li>
+                                <li>Click on cell to edit text</li>
+                                <li>Delete key (or backspace if empty) deletes current cell</li>
+                                <li>Insert key inserts empty cell above current cell</li>
+                                <li>Up arrow key moves current cell up one</li>
+                                <li>Down arrow key moves current cell down one</li>
+                                <li>Enter key to return to Add item text field above</li>
+                                <li>To expand cell, left-drag with mouse on lower right corner</li>
+                            </ul>
+                        </p>
+                        <p>
+                            Description: click "I have writer's block" for AI to write for you. Title,
+                            ingredients, and instructions, need be completed.
+                        </p>
+                        <p>
+                            Image: "Edit image" button to replace current image. "Choose File" to
+                            upload image from your device.
+                        </p>
+                        <p>
+                            Title, Ingredient, Description, and Tags are required. Image is optional.
+                        </p>
+                    </div>
+                </div>
                 <div class="input-field">
                     <input class="input" id="ingredient" type="text" placeholder="Add ingredient name" 
                         aria-label="ingredient text field">

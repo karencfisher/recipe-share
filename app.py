@@ -17,6 +17,13 @@ error_log = None
 
 @app.route('/')
 def landing():
+    global recipe_object
+    global error_log
+    if error_log is None:
+            error_log = ErrorLog()
+    if recipe_object is None:
+            recipe_object = Recipe()
+            
     return render_template("index.html")
 
 
@@ -27,12 +34,8 @@ def queryDb():
     global error_log
 
     try:
-        if error_log is None:
-            error_log = ErrorLog()
         if db is None:
             db = DB()
-        if recipe_object is None:
-            recipe_object = Recipe()
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": f"database unavailable: {ex}"}), 500

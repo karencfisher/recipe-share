@@ -37,7 +37,7 @@ function addItem(textBox, itemClass, parent) {
 
     item.addEventListener("keydown", (e) => {
         // shift+space bar to remove
-        if (e.key === "Delete") {
+        if (e.key === "Delete" || (e.key === "Backspace" && e.target.value === "")) {
             e.preventDefault();
             focusNext(item, textBox);
             item.remove();

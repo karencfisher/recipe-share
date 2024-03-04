@@ -9,7 +9,7 @@ from datetime import datetime
 from PIL import Image
 
 
-TEST = True
+TEST = False
 
 class DB:
     def __init__(self):

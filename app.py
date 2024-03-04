@@ -11,6 +11,8 @@ from utils import generateDescription, ErrorLog
 
 app = Flask(__name__)
 db = None
+recipe_object = None
+error_log = None
 
 
 @app.route('/')
@@ -21,9 +23,16 @@ def landing():
 @app.route('/search')
 def queryDb():
     global db
+    global recipe_object
+    global error_log
+
     try:
+        if error_log is None:
+            error_log = ErrorLog()
         if db is None:
             db = DB()
+        if recipe_object is None:
+            recipe_object = Recipe()
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": f"database unavailable: {ex}"}), 500
@@ -130,6 +139,4 @@ def printable_card():
     
 
 if __name__ == "__main__":
-    error_log = ErrorLog()
-    recipe_object = Recipe()
     app.run(debug=True)

@@ -4,6 +4,7 @@ document.getElementById("back-button").addEventListener("click", () => {
 
 const printButton = document.getElementById("print-button");
 printButton.addEventListener("click", () =>{
-    const idField = document.getElementById("recipe-id");
-    location.href = `/printable?id=${idField.value}`;
+    location.href = "/printable";
 });
+
+

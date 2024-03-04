@@ -9,12 +9,17 @@ from datetime import datetime
 from PIL import Image
 
 
+TEST = True
+
 class DB:
     def __init__(self):
         load_dotenv()
         password = os.getenv("MONGODB_PASSWORD")
         url = os.getenv("MONGODB_URL")
-        CONNECTION_STRING = f"mongodb+srv://karen:{password}@{url}/recipe-share"
+        if TEST:
+            CONNECTION_STRING = f"mongodb://localhost:27017/recipe-share"
+        else:
+            CONNECTION_STRING = f"mongodb+srv://karen:{password}@{url}/recipe-share"
         client = MongoClient(CONNECTION_STRING)
         db = client.get_database()
         self.collection = db.get_collection("recipes")
@@ -49,8 +54,14 @@ class DB:
                 }
             },
             {
-                '$sort': {
-                    "Views": -1
+                "$project": {
+                    "_id": 1,
+                    "Title": 1,
+                    "Views": 1,
+                    "Added": 1,
+                    "score": {
+                        "$meta": "vectorSearchScore"
+                    }
                 }
             }
         ])
@@ -73,42 +84,31 @@ class DB:
         if result is None:
             return None
         recipe = {
-                "id": result["_id"],
-                "title": result["Title"],
-                "image": result["Image_Name"],
-                "description": result["Description"],
-                "views": result["Views"] + 1,
-                "ingredients": result["Ingredients"],
-                "instructions": result["Instructions"],
-                "tags": result["Tags"],
-                "added": result['Added'].strftime('%a %d %b %Y, %I:%M%p')
+                "_id": result["_id"],
+                "Title": result["Title"],
+                "Image_Name": result.get("Image_Name"),
+                "imageData": result.get("imageData"),
+                "Description": result["Description"],
+                "Views": result["Views"] + 1,
+                "Ingredients": result["Ingredients"],
+                "Instructions": result["Instructions"],
+                "Tags": result["Tags"],
+                "Added": result['Added']
             }
+        
         self.collection.update_one({"_id": ObjectId(id)}, 
-                                   {"$set": {"Views": recipe["views"]}})
+                                   {"$set": {"Views": recipe["Views"]}})
         return recipe
     
-    def addRecipe(self, recipe):
-        # process image if change
-        if recipe["imageFile"] is not None and recipe["imageData"] is not None:
-            imageData = recipe["imageData"].split(",")[1]
-            image = Image.open(io.BytesIO(base64.b64decode(imageData)))
-            image.thumbnail((274, 170))
+    def writeRecipe(self, recipe):
+        id = recipe.get("_id")
+        if id is None or id == "":
+            del recipe["_id"]
+            result = self.collection.insert_one(recipe)
+            recipe["_id"] = str(result.inserted_id)
 
-            # store image file on server
-            base_file_name, _ = os.path.splitext(recipe['imageFile'])
-            recipe["Image_Name"] = base_file_name
-            file_name = base_file_name + ".jpg"
-            image.save(os.path.join('static', 'recipe-images', file_name))
-
-        recipe["Added"] = datetime.utcnow()
-        del recipe["imageData"]
-        del recipe["imageFile"]
-        id = recipe["tempId"]
-        del recipe["tempId"]
-
-        if id == "":
-            self.collection.insert_one(recipe)
         else:
+            del recipe["_id"]
             self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})
-        
+            recipe["_id"] = ObjectId(id)
 

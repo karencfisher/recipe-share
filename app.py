@@ -4,10 +4,9 @@ from io import BytesIO
 import json
 import os
 
-
+from recipe import Recipe
 from db import DB
-from description_generator import generateDescription
-from errorlog import ErrorLog
+from utils import generateDescription, ErrorLog
 
 
 app = Flask(__name__)
@@ -46,13 +45,21 @@ def queryDb():
             max_found = request.args.get("max_found")
             results = db.query_recipes_added(int(max_found))
         else:
-            id = request.args.get("id")
-            results = db.query_recipe_by_id(id)
-            mode = request.args.get("mode")
-            if results is None:
-                return jsonify({"error": "no data"}), 404
-            return render_template("recipe-page.html", recipe=results, mode=mode)
+            raise Exception("Invalid method")
         return jsonify(results), 200
+    except Exception as ex:
+        error_log.log_error(ex)
+        return jsonify({"error": "Internal server error"}), 500
+    
+    
+@app.route('/display')
+def display_recipe():
+    id = request.args.get("id")
+    mode = request.args.get("mode")
+    try:
+        results = db.query_recipe_by_id(id)
+        recipe_object.create_recipe(results)
+        return render_template("recipe-page.html", recipe=results, mode=mode)
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
@@ -60,31 +67,40 @@ def queryDb():
 
 @app.route('/edit')
 def edit_recipe():
-    global db
-    id = request.args.get("id")
+    update = request.args.get("update")
     mode = request.args.get("mode")
-    if id is not None:
-        try:
-            if db is None:
-                db = DB()
-            recipe = db.query_recipe_by_id(id)
-        except Exception as ex:
-            error_log.log_error(ex)
-            return jsonify({"error": "Internal server error"}), 500
+    if update == "true":
+        recipe = recipe_object.get_recipe()
     else:
-        recipe = {"title": "", "description": ""}
+        recipe_object.create_recipe()
+        recipe = recipe_object.get_recipe()
     return render_template("recipe-editor.html", recipe=recipe, mode=mode)
 
 
-@app.route('/insert', methods=['POST'])
+@app.route('/update', methods=['POST'])
 def insert_db():
     if not request.is_json:
         return jsonify({"response": 403}), 403
-    global db
     try:
-        if db is None:
-            db = DB()
-        db.addRecipe(request.json)
+        recipe_object.update_recipe(request.json)
+        return jsonify({"response": 200}), 200
+    except Exception as ex:
+        error_log.log_error(ex)
+        return jsonify({"error": "Internal server error"}), 500
+    
+
+@app.route('/preview')
+def preview_recipe():
+    mode = request.args.get("mode")
+    recipe = recipe_object.get_recipe()
+    return render_template("recipe-page.html", recipe=recipe, mode=mode, preview=True)
+
+    
+@app.route('/publish')
+def publish_recipe():
+    try:
+        recipe = recipe_object.get_recipe()
+        db.writeRecipe(recipe)
         return jsonify({"response": 200}), 200
     except Exception as ex:
         error_log.log_error(ex)
@@ -105,12 +121,8 @@ def generate_description():
 
 @app.route('/printable')
 def printable_card():
-    id = request.args.get("id")
-    global db
     try:
-        if db is None:
-            db = DB()
-        recipe = db.query_recipe_by_id(id)
+        recipe = recipe_object.get_recipe()
         return render_template("recipe-card.html", recipe=recipe)
     except Exception as ex:
         error_log.log_error(ex)
@@ -119,4 +131,5 @@ def printable_card():
 
 if __name__ == "__main__":
     error_log = ErrorLog()
+    recipe_object = Recipe()
     app.run(debug=True)

@@ -187,15 +187,15 @@ if (fileInput) {
 /* Save and reset handlers ***********************/
 const backButton = document.getElementById("back-button");
 const resetButton = document.getElementById("reset-button");
-const saveButton = document.getElementById("save-button");
 const previewButton = document.getElementById("preview-button");
+const publishButton = document.getElementById("publish-button");
 const generateButton = document.getElementById("generate-button");
 
 function buildRecipe(complete) {
     // initialize recipe object
     const idField = document.getElementById("recipe-id");
     const recipe = {
-        tempId: idField.value,
+        _id: idField.value,
         Title: titleText.value,
         Ingredients: [],
         Instructions: [],
@@ -238,10 +238,17 @@ function buildRecipe(complete) {
     if (complete) {
         // image
         const fileInput = document.getElementById("image-file");
+        const image = document.getElementById("image");
         if (fileInput) {
-            recipe.imageFile = fileInput.files[0].name;
-            const image = document.getElementById("image");
-            recipe.imageData = image.src;
+            if (fileInput.files === null) {
+                recipe.imageFile = fileInput.value;
+            }
+            else if (fileInput.files.length > 0) {
+                recipe.imageFile = fileInput.files[0].name;
+            }
+            if (image) {
+                recipe.imageData = image.src;
+            }
         }
         else {
             recipe.imageFile = image.src;
@@ -273,10 +280,10 @@ backButton.addEventListener("click", () => {
     history.back();
 });
 
-saveButton.addEventListener("click", () => {
+previewButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
     if (recipe != undefined) {
-        fetch('/insert', {
+        fetch('/update', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -286,7 +293,41 @@ saveButton.addEventListener("click", () => {
         .then(response => response.json())
         .then(data => {
             if (data.response == 200) {
-                displayMessage("Recipe published successfully", true);
+                const newURL = `/edit?update=true&mode=${document.body.className}`;
+                history.replaceState({}, "", newURL);
+                location.href = `/preview?mode=${document.body.className}`;
+            }
+            else {
+                displayMessage(`Error occured ${data.response}`);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+publishButton.addEventListener("click", () => {
+    recipe = buildRecipe(true);
+    if (recipe != undefined) {
+        fetch('/update', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(recipe)
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.response == 200) {
+                fetch("/publish", {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.response == 200) {
+                        displayMessage("Recipe published!", true)
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             }
             else {
                 displayMessage(`Error occured ${data.response}`);
@@ -313,7 +354,6 @@ generateButton.addEventListener("click", () => {
             displayMessage("ChatGPT has written a description for you!", true);
         })
         .catch(error => console.error('Error:', error));
-        
     }
 });
 

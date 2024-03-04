@@ -1,6 +1,16 @@
 import os
 import openai
 from dotenv import load_dotenv
+import logging
+
+class ErrorLog:
+    def __init__(self):
+        logging.basicConfig(level=logging.INFO, 
+                            format='%(asctime)s %(message)s')
+        self.logger = logging.getLogger('error_log')
+
+    def log_error(self, error):
+        self.logger.exception(error)
 
 
 load_dotenv()

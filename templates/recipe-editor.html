@@ -64,8 +64,8 @@
         <h1>Recipe Editor</h1>
     </header>
     <main id="main">
-        {% if recipe.id is defined and recipe.id != "" %}
-            <input id="recipe-id" type="hidden" value="{{ recipe.id }}">
+        {% if recipe._id is defined and recipe._id != None %}
+            <input id="recipe-id" type="hidden" value="{{ recipe._id }}">
         {% else %}
             <input id="recipe-id" type="hidden" value="">
         {% endif %}
@@ -74,7 +74,7 @@
             <section id="recipe-title">
                 <div class="input-field">
                     <input class="input" id="title" type="text" placeholder="Add recipe title"
-                        aria-label="title text field" value="{{ recipe.title }}">
+                        aria-label="title text field" value="{{ recipe.Title }}">
                 </div>
             </section>
 
@@ -86,14 +86,12 @@
                 </div>
                 <div class="container" id="ingredient-container" tabindex="0" 
                     aria-label="ingredients, tab to select items, tab to edit, shift+spacebar to remove">
-                    {% if recipe.ingredients is defined and recipe.ingredients|length > 0 %}
-                        {% set count = namespace(value=1) %}
-                        {% for ingredient in recipe.ingredients %}
-                            <textarea class="ingredient" id="ingredient{{ count.value }}" rows="1">{{ ingredient }}</textarea>
-                            <script id="kill-me">decorate("ingredient{{ count.value }}", "ingredient", "ingredient-container")</script>
-                            {% set count.value = count.value + 1 %}
-                        {% endfor %}
-                    {% endif %}
+                    {% set count = namespace(value=1) %}
+                    {% for ingredient in recipe.Ingredients %}
+                        <textarea class="ingredient" id="ingredient{{ count.value }}" rows="1">{{ ingredient }}</textarea>
+                        <script id="kill-me">decorate("ingredient{{ count.value }}", "ingredient", "ingredient-container")</script>
+                        {% set count.value = count.value + 1 %}
+                    {% endfor %}
                 </div>
             </section>
             
@@ -105,14 +103,12 @@
                 </div>
                 <div class="container" id="instruction-container" tabindex="0" 
                     aria-label="instructions, tab to select items, tab to edit, shift+spacebar to remove">
-                    {% if recipe.instructions is defined and recipe.instructions|length > 0 %}
-                        {% set count = namespace(value=1) %}
-                        {% for instruction in recipe.instructions %}
-                            <textarea class="instruction" id="instruction{{ count.value }}" rows="1">{{ instruction }}</textarea>
-                            <script id="kill-me">decorate("instruction{{ count.value }}", "instruction", "instruction-container")</script>
-                            {% set count.value = count.value + 1 %}
-                        {% endfor %}
-                    {% endif %}
+                    {% set count = namespace(value=1) %}
+                    {% for instruction in recipe.Instructions %}
+                        <textarea class="instruction" id="instruction{{ count.value }}" rows="1">{{ instruction }}</textarea>
+                        <script id="kill-me">decorate("instruction{{ count.value }}", "instruction", "instruction-container")</script>
+                        {% set count.value = count.value + 1 %}
+                    {% endfor %}
                 </div>
             </section>
         </div>
@@ -125,18 +121,21 @@
                 </div>
                 <div class="container" id="description-container">
                     <textarea name="description-text" id="description-text" cols="30" rows="10"
-                        placeholder="Add enticing description">{{ recipe.description }}</textarea>
+                        placeholder="Add enticing description">{{ recipe.Description }}</textarea>
                 </div>
             </section>
 
             <section>
                 <div class="input-field">
-                    <span class="section-label">Image (make it enticing)</span>
+                    <span class="section-label">Image (optional - make it enticing)</span>
                     <button class="add-button" id="edit-image">Edit image</button>
                 </div>
                 <div class="container" id="image-container">
-                    {% if recipe.image is defined and recipe.image != "" %}
-                        <img id="image" src="./static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
+                    {% if recipe.imageData is defined and recipe.imageData != None %}
+                        <img id="image" src="{{ recipe.imageData }}" alt="{{ recipe.Image_Name }}">
+                        <input type="hidden" name="file" id="image-file" value="{{ recipe.Image_Name}}.jpg"/>
+                    {% elif recipe.Image_Name is defined and recipe.Image_Name != None %}
+                        <img id="image" src="./static/recipe-images/{{ recipe.Image_Name }}.jpg" alt="{{ recipe.Image_Name }}">
                     {% else %}
                         <input type="file" name="file" id="image-file" />
                     {% endif %}
@@ -150,9 +149,9 @@
                 </div>
                 <div class="container" id="tags-container" tabindex="0" 
                     aria-label="ingredients, tab to select items, tab to edit, shift+spacebar to remove">
-                    {% if recipe.tags is defined and recipe.tags|length > 0 %}
+                    {% if recipe.Tags is defined and recipe.Tags|length > 0 %}
                         {% set count = namespace(value=1) %}
-                        {% for tag in recipe.tags %}
+                        {% for tag in recipe.Tags %}
                             <textarea class="tag" id="tag{{ count.value }}" rows="1">{{ tag }}</textarea>
                             <script id="kill-me">decorate("tag{{ count.value }}", "tag", "tag-container")</script>
                             {% set count.value = count.value + 1 %}
@@ -168,7 +167,8 @@
     <footer>
         <div id="choices">
             <button id="back-button" aria-label="back">Back</button>
-            <button id="save-button" aria-label="publish recipe">Publish</button>
+            <button id="preview-button" aria-label="preview recipe">Preview</button>
+            <button id="publish-button" aria-label="publish recipe">Publish</button>
         </div>
     </footer>
 

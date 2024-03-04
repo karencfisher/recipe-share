@@ -195,7 +195,7 @@ img {
 }
 
 #error-message {
-    position: absolute;
+    position: fixed;
     padding: 10px;
     min-width: calc(var(--region-width) - 20px);
     top: -1000px;

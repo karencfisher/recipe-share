@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Share - {{ recipe.title }}</title>
+    <title>Recipe Share - {{ recipe.Title }}</title>
     <link rel="stylesheet" href="../static/style.css" />
     <link rel="stylesheet" href="../static/recipe-card.css" />
     <script src="../static/recipe-card.js" defer></script>
@@ -11,12 +11,14 @@
 </head>
 <body>
     <main id="main">
-        <div id="card-title"><h1>{{ recipe.title }}</h1></div>
+        <div id="card-title"><h1>{{ recipe.Title }}</h1></div>
         <div id="description">
-            {% if recipe.image is defined and recipe.image !="" %}
-                <img src="../static/recipe-images/{{ recipe.image }}.jpg" alt="{{ recipe.image }}">
+            {% if recipe.imageData is defined and recipe.imageData != None %}
+                <img src="{{ recipe.imageData }}" alt="{{ recipe.Image_Name }}">
+            {% elif recipe.Image_Name is defined and recipe.Image_Name != None %}
+                <img src="./static/recipe-images/{{ recipe.Image_Name }}.jpg" alt="{{ recipe.Image_Name }}">
             {% endif %}
-            {{ recipe.description}}
+            {{ recipe.Description}}
         </div>
         <div id="columns">
             <div class="column" id="left-column">
@@ -24,7 +26,7 @@
                     Ingredients
                 </h3>
                 <ul>
-                    {% for ingredient in recipe.ingredients %}
+                    {% for ingredient in recipe.Ingredients %}
                         <li>{{ ingredient }}</li>
                     {% endfor %}
                 </ul>
@@ -34,7 +36,7 @@
                     Instructions
                 </h3>
                 <ol>
-                    {% for instruction in recipe.instructions %}
+                    {% for instruction in recipe.Instructions %}
                         <li>{{ instruction }}</li>
                     {% endfor %}
                 </ol>

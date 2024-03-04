@@ -14,7 +14,7 @@ function loadRecipes(container, data) {
             title = titleWords.join(" ");
         }
 
-        html = `<a href=\"/search?id=${item.id}\">${title}</a><br /> 
+        html = `<a href=\"/display?id=${item.id}\">${title}</a><br /> 
             <span id="views">${item.views} views</span>`;
         element.innerHTML = html;
         element.querySelector("a").addEventListener("click", (e) => {

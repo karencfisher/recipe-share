@@ -133,6 +133,7 @@
                 <div class="container" id="image-container">
                     {% if recipe.imageData is defined and recipe.imageData != None %}
                         <img id="image" src="{{ recipe.imageData }}" alt="{{ recipe.Image_Name }}">
+                        <input type="hidden" name="file" id="image-file" value="{{ recipe.Image_Name}}.jpg"/>
                     {% elif recipe.Image_Name is defined and recipe.Image_Name != None %}
                         <img id="image" src="./static/recipe-images/{{ recipe.Image_Name }}.jpg" alt="{{ recipe.Image_Name }}">
                     {% else %}

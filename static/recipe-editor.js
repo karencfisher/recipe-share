@@ -240,8 +240,13 @@ function buildRecipe(complete) {
         const fileInput = document.getElementById("image-file");
         const image = document.getElementById("image");
         if (fileInput) {
-            if (fileInput.files.length > 0) {
+            if (fileInput.files === null) {
+                recipe.imageFile = fileInput.value;
+            }
+            else if (fileInput.files.length > 0) {
                 recipe.imageFile = fileInput.files[0].name;
+            }
+            if (image) {
                 recipe.imageData = image.src;
             }
         }

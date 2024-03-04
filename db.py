@@ -103,7 +103,10 @@ class DB:
     def writeRecipe(self, recipe):
         id = recipe.get("_id")
         if id is None or id == "":
+            del recipe["_id"]
             result = self.collection.insert_one(recipe)
+            recipe["_id"] = str(result.inserted_id)
+
         else:
             del recipe["_id"]
             self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})

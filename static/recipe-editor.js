@@ -293,6 +293,8 @@ previewButton.addEventListener("click", () => {
         .then(response => response.json())
         .then(data => {
             if (data.response == 200) {
+                const newURL = `/edit?update=true&mode=${document.body.className}`;
+                history.replaceState({}, "", newURL);
                 location.href = `/preview?mode=${document.body.className}`;
             }
             else {

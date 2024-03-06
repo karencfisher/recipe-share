@@ -26,22 +26,6 @@ function loadRecipes(container, data) {
     });
 }
 
-addEventListener("load", () => {
-    fetch("/search?method=views&max_found=5", {
-        method: 'GET'
-    })
-    .then(response => response.json())
-    .then(data => loadRecipes("views", data))
-    .catch(error => console.error('Error:', error));
-
-    fetch("/search?method=recent&max_found=5", {
-        method: 'GET'
-    })
-    .then(response => response.json())
-    .then(data => loadRecipes("recent", data))
-    .catch(error => console.error('Error:', error));
-});
-
 const searchButton = document.getElementById("search-button");
 const searchText = document.getElementById("search-text");
 

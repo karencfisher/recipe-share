@@ -19,27 +19,24 @@ error_log = None
 def landing():
     global recipe_object
     global error_log
-    if error_log is None:
-            error_log = ErrorLog()
-    if recipe_object is None:
-            recipe_object = Recipe()
-
-    return render_template("index.html")
-
-
-@app.route('/search')
-def queryDb():
     global db
-    global recipe_object
-    global error_log
-
+    if error_log is None:
+        error_log = ErrorLog()
+    if recipe_object is None:
+        recipe_object = Recipe()
     try:
         if db is None:
             db = DB()
+        recent = results = db.query_recipes_added(int(5))
+        views = db.query_recipes_top_views(int(5))
     except Exception as ex:
         error_log.log_error(ex)
-        return jsonify({"error": f"database unavailable: {ex}"}), 500
-    
+        return jsonify({"error": "Internal server error"}), 500
+    return render_template("index.html", recent=recent, views=views)
+
+
+@app.route('/search')
+def queryDb():   
     method = request.args.get("method")
     try:
         if method == "semantic":

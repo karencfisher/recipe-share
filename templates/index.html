@@ -11,7 +11,7 @@
             const el = document.getElementById(element);
                 el.addEventListener("click", (e) => {
                     e.preventDefault();
-                    const uri = e.target.getAttribute("href") + `&mode=${getMode()}`
+                    const uri = e.target.getAttribute("href") + `&mode=${document.body.className}`
                     location.href = uri;
                 });
 
@@ -25,10 +25,6 @@
                 title = titleWords.join(" ");
             }
             el.innerHTML = title;
-        }
-
-        function getMode() {
-            return document.body.className;
         }
     </script>
     <style>

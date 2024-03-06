@@ -8,7 +8,7 @@ function loadRecipes(container, data) {
 
         let title = "";
         if (titleWords.length > 7) {
-            title = titleWords.slice(0, 6).join(" ") + "...";
+            title = titleWords.slice(0, 7).join(" ") + "...";
         }
         else {
             title = titleWords.join(" ");

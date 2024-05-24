@@ -1,0 +1,22 @@
+a {
+    font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: .8rem;
+    color: var(--font-color);
+}
+
+h3 {
+    padding-left: 3px;
+}
+
+span {
+    font-size: .8rem;
+}
+
+.link {
+    height: 3em;
+}
+
+#contribute {
+    min-height: 0px;
+}
+

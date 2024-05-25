@@ -7,7 +7,7 @@ from io import BytesIO
 from dotenv import load_dotenv
 import os
 
-from recipe import Recipe
+from recipe import RecipeCollection
 from db import DB
 from utils import generateDescription, ErrorLog
 
@@ -17,7 +17,7 @@ load_dotenv()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 db = DB()
-recipe_object = Recipe()
+recipes = RecipeCollection()
 error_log = ErrorLog()
 bcrypt = Bcrypt()
 
@@ -84,6 +84,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    recipes.deleteRecipe(current_user.get_id())
     logout_user()
     return redirect('/')
 
@@ -140,7 +141,7 @@ def display_recipe():
     mode = request.args.get("mode")
     try:
         results = db.query_recipe_by_id(id)
-        recipe_object.create_recipe(results)
+        recipes.addRecipe(current_user.get_id(), results)
         return render_template("recipe-page.html", recipe=results, mode=mode)
     except Exception as ex:
         error_log.log_error(ex)
@@ -153,10 +154,10 @@ def edit_recipe():
     update = request.args.get("update")
     mode = request.args.get("mode")
     if update == "true":
-        recipe = recipe_object.get_recipe()
+        recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
     else:
-        recipe_object.create_recipe()
-        recipe = recipe_object.get_recipe()
+        recipes.addRecipe(current_user.get_id())
+        recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
     return render_template("recipe-editor.html", recipe=recipe, mode=mode)
 
 
@@ -166,7 +167,8 @@ def insert_db():
     if not request.is_json:
         return jsonify({"response": 403}), 403
     try:
-        recipe_object.update_recipe(request.json)
+        recipe = recipes.getRecipe(current_user.get_id())
+        recipe.update_recipe(request.json, current_user.username)
         return jsonify({"response": 200}), 200
     except Exception as ex:
         error_log.log_error(ex)
@@ -177,7 +179,7 @@ def insert_db():
 @login_required
 def preview_recipe():
     mode = request.args.get("mode")
-    recipe = recipe_object.get_recipe()
+    recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
     return render_template("recipe-page.html", recipe=recipe, mode=mode, preview=True)
 
     
@@ -185,7 +187,7 @@ def preview_recipe():
 @login_required
 def publish_recipe():
     try:
-        recipe = recipe_object.get_recipe()
+        recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
         db.writeRecipe(recipe)
         return jsonify({"response": 200}), 200
     except Exception as ex:
@@ -210,7 +212,7 @@ def generate_description():
 @login_required
 def printable_card():
     try:
-        recipe = recipe_object.get_recipe()
+        recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
         return render_template("recipe-card.html", recipe=recipe)
     except Exception as ex:
         error_log.log_error(ex)

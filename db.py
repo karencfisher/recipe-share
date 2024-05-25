@@ -80,22 +80,10 @@ class DB:
         return self.__extract_results(results)
 
     def query_recipe_by_id(self, id):
-        result = self.collection.find_one({"_id": ObjectId(id)})
-        if result is None:
+        recipe = self.collection.find_one({"_id": ObjectId(id)})
+        if recipe is None:
             return None
-        recipe = {
-                "_id": result["_id"],
-                "Title": result["Title"],
-                "Image_Name": result.get("Image_Name"),
-                "imageData": result.get("imageData"),
-                "Description": result["Description"],
-                "Views": result["Views"] + 1,
-                "Ingredients": result["Ingredients"],
-                "Instructions": result["Instructions"],
-                "Tags": result["Tags"],
-                "Added": result['Added']
-            }
-        
+        recipe["Views"] += 1
         self.collection.update_one({"_id": ObjectId(id)}, 
                                    {"$set": {"Views": recipe["Views"]}})
         return recipe

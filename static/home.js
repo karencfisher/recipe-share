@@ -86,3 +86,9 @@ theme.addEventListener("keypress", (e) => {
         toggleTheme(theme);
     }
 });
+
+const logoutButton = document.getElementById("logout-button");
+logoutButton.addEventListener("click", async () => {
+    result = await fetch("/logout");
+    window.location.href = result.url;
+});

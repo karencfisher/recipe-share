@@ -58,6 +58,30 @@ fieldset {
     align-self: flex-end;
 }
 
+#error-msg {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    top: -600px;
+    z-index: 9999;
+    width: fit-content;
+    height: 50px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    background-color: rgb(230, 161, 121);
+    padding: 10px;
+}
+
+#error-msg[data-open="true"] {
+    top: 20%;
+}
+
+#error-msg > span {
+    font-size: 2rem;
+}
+
 @media screen and (min-width: 768px) {
     #login-dialog {
         width: calc(var(--region-width) * 2 + 20px);

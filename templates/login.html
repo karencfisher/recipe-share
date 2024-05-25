@@ -67,9 +67,14 @@
             </div>
         {% else %}
             <div id="login-buttons">
-                <button id="login-button">Save</button>
+                <button id="login-button">Login</button>
             </div>
         {% endif %}
+    </div>
+
+    <div id="error-msg" data-open="false">
+        <span class="material-icons-outlined" id="msg-icon">error_outline</span>
+        <div id="error-txt">An error happened</div>
     </div>
 </body>
 </html>

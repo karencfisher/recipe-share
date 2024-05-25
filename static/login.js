@@ -49,18 +49,77 @@ eyes.forEach((item) => {
     });
 });
 
+async function callRoute(route, query) {
+    try {
+        const result = await fetch(
+            route,
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify(query)
+            }
+        );
+        return result;
+    }
+    catch(error) {
+        console.log(error);
+    }
+}
+
 const loginButton = document.getElementById("login-button");
-loginButton.addEventListener("click", (e) => {
+loginButton.addEventListener("click", async (e) => {
+    let result = null;
     if (e.target.innerText === "Register") {
-        // Add user
+        const usernameText = document.getElementById("username-text").value;
+        const emailText = document.getElementById("email-text").value;
+        const passwordText = document.getElementById("password-text").value;
+        const passwordConfirmText = document.getElementById("password-confirm-text").value;
+
+        const re = /\S+@\S+\.\S+/;
+        if (!re.test(emailText)) {
+            displayError("error", "Invalid email address");
+            document.getElementById("email-text").focus();
+            return;
+        }
+
+        if (passwordText !== passwordConfirmText) {
+            displayError("error", "Passwords do not match");
+            document.getElementById("password-text").focus();
+            return;
+        }
+
+        query = {
+            "username": usernameText,
+            "email": emailText,
+            "password": passwordText
+        }
+        result = await callRoute("/register", query);
 
     }
     else if (e.target.innerText === "Save") {
         // Reset password
     }
     else {
-        // Login user
+        const usernameText = document.getElementById("username-text").value;
+        const passwordText = document.getElementById("password-text").value;
+        query = {
+            "username": usernameText,
+            "password": passwordText
+        }
+        result = await callRoute("/login", query);
+    }
 
+    if (result.status === 401) {
+        displayError("error", "Incorrect username and/or password")
+    }
+    else if (result.status === 400) {
+        displayError("error", "Username is already in use")
+    }
+    else if (e.target.innerText === "Register" && result.status === 200) {
+        displayError("info", "Sign up successfull. You may now login.")
+    }
+    else if (result.redirected) {
+        window.location.href = result.url;
     }
 });
 
@@ -68,3 +127,23 @@ const forgotButton = document.getElementById("forgot-button");
 forgotButton.addEventListener("click", () => {
     // handle password reset
 });
+
+function displayError(type, msg) {
+    const errorMsg = document.getElementById("error-msg");
+    const errortxt = document.getElementById("error-txt");
+    const msgIcon = document.getElementById("msg-icon");
+    if (type === "info") {
+        msgIcon.innerText = "info";
+    }
+    else {
+        msgIcon.innerText = "error_outline";
+    }
+
+    errortxt.innerText = msg;
+    errorMsg.dataset.open = "true";
+
+    setTimeout(() => {
+        errorMsg.dataset.open = "false";
+    }, 2000);
+}
+

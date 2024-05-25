@@ -1,20 +1,46 @@
 from flask import Flask, jsonify, request, render_template, redirect
 from flask_login import login_user, current_user, logout_user, login_required
+from flask_login import UserMixin, LoginManager
 from flask_bcrypt import Bcrypt
 from urllib.parse import unquote
 from io import BytesIO
+from dotenv import load_dotenv
+import os
 
 from recipe import Recipe
 from db import DB
 from utils import generateDescription, ErrorLog
-from models import User
 
+
+load_dotenv()
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 db = DB()
 recipe_object = Recipe()
 error_log = ErrorLog()
 bcrypt = Bcrypt()
+
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'start'  # Define the view for login page
+
+@login_manager.user_loader
+def load_user(user_id):
+    user = db.query_user_id(user_id)
+    if user:
+        return User(user)
+    return None
+
+class User(UserMixin):
+    def __init__(self, user):
+        self.id = str(user['_id'])
+        self.username = user['username']
+        self.email = user['email']
+        self.password = user['password']
+
+    def get_id(self):
+        return self.id
 
 
 @app.route('/')
@@ -26,9 +52,10 @@ def start():
 def register():
     if current_user.is_authenticated:
         return redirect("/home")
-    username = request.form.get('username')
-    email = request.form.get('email')
-    password = request.form.get('password')
+    data = request.get_json()
+    username = data.get('username')
+    email = data.get('email')
+    password = data.get('password')
 
     user = user = db.query_user_name(username)
     if user is not None:
@@ -43,8 +70,9 @@ def register():
 def login():
     if current_user.is_authenticated:
         return redirect("/home")
-    username = request.form.get('username')
-    password = request.form.get('password')
+    data = request.get_json()
+    username = data.get('username')
+    password = data.get('password')
 
     user = db.query_user_name(username)
     if user and bcrypt.check_password_hash(user['password'], password):
@@ -190,4 +218,4 @@ def printable_card():
     
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)

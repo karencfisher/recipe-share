@@ -1,41 +1,79 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request, render_template, redirect
+from flask_login import login_user, current_user, logout_user, login_required
+from flask_bcrypt import Bcrypt
 from urllib.parse import unquote
 from io import BytesIO
-import json
-import os
 
 from recipe import Recipe
 from db import DB
 from utils import generateDescription, ErrorLog
+from models import User
 
 
 app = Flask(__name__)
-db = None
-recipe_object = None
-error_log = None
+db = DB()
+recipe_object = Recipe()
+error_log = ErrorLog()
+bcrypt = Bcrypt()
 
 
 @app.route('/')
-def landing():
-    global recipe_object
-    global error_log
-    global db
-    if error_log is None:
-        error_log = ErrorLog()
-    if recipe_object is None:
-        recipe_object = Recipe()
+def start():
+    return render_template("login.html", reset=False)
+
+
+@app.route('/register', methods=["POST"])
+def register():
+    if current_user.is_authenticated:
+        return redirect("/home")
+    username = request.form.get('username')
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    user = user = db.query_user_name(username)
+    if user is not None:
+        return jsonify({"error": "username already exists"}), 400
+    
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    db.add_user(username, email, hashed_password)
+    return jsonify({"success": "Your account is now created"}), 200
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    if current_user.is_authenticated:
+        return redirect("/home")
+    username = request.form.get('username')
+    password = request.form.get('password')
+    
+    user = db.query_user_name(username)
+    if user and bcrypt.check_password_hash(user['password'], password):
+        login_user(User(user))
+        return redirect('/home')
+    else:
+        return jsonify({"error": "Incorrect user name or password"}), 401
+
+
+@app.route('/home')
+@login_required
+def home():
     try:
-        if db is None:
-            db = DB()
         recent = results = db.query_recipes_added(int(5))
         views = db.query_recipes_top_views(int(5))
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
-    return render_template("index.html", recent=recent, views=views)
+    return render_template("home.html", recent=recent, views=views)
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    pass
 
 
 @app.route('/search')
+@login_required
 def queryDb():   
     method = request.args.get("method")
     try:
@@ -62,6 +100,7 @@ def queryDb():
     
     
 @app.route('/display')
+@login_required
 def display_recipe():
     id = request.args.get("id")
     mode = request.args.get("mode")
@@ -75,6 +114,7 @@ def display_recipe():
     
 
 @app.route('/edit')
+@login_required
 def edit_recipe():
     update = request.args.get("update")
     mode = request.args.get("mode")
@@ -87,6 +127,7 @@ def edit_recipe():
 
 
 @app.route('/update', methods=['POST'])
+@login_required
 def insert_db():
     if not request.is_json:
         return jsonify({"response": 403}), 403
@@ -99,6 +140,7 @@ def insert_db():
     
 
 @app.route('/preview')
+@login_required
 def preview_recipe():
     mode = request.args.get("mode")
     recipe = recipe_object.get_recipe()
@@ -106,6 +148,7 @@ def preview_recipe():
 
     
 @app.route('/publish')
+@login_required
 def publish_recipe():
     try:
         recipe = recipe_object.get_recipe()
@@ -117,6 +160,7 @@ def publish_recipe():
 
 
 @app.route('/generate', methods=['POST'])
+@login_required
 def generate_description():
     if not request.is_json:
         return jsonify({"response": 403}), 403
@@ -129,6 +173,7 @@ def generate_description():
 
 
 @app.route('/printable')
+@login_required
 def printable_card():
     try:
         recipe = recipe_object.get_recipe()

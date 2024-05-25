@@ -9,7 +9,7 @@ from datetime import datetime
 from PIL import Image
 
 
-TEST = False
+TEST = True
 
 class DB:
     def __init__(self):
@@ -21,8 +21,8 @@ class DB:
         else:
             CONNECTION_STRING = f"mongodb+srv://karen:{password}@{url}/recipe-share"
         client = MongoClient(CONNECTION_STRING)
-        db = client.get_database()
-        self.collection = db.get_collection("recipes")
+        self.db = client.get_database()
+        self.collection = self.db.get_collection("recipes")
 
         openai.api_key = os.getenv("OPENAI_KEY")
         self.model = "text-embedding-ada-002"
@@ -112,3 +112,17 @@ class DB:
             self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})
             recipe["_id"] = ObjectId(id)
 
+    def query_user_name(self, user_name):
+        user_collection = self.db.get_collection("users")
+        return user_collection.find_one({"username": user_name})
+    
+    def query_user_id(self, user_id):
+        user_collection = self.db.get_collection("users")
+        return user_collection.find_one({"_id": ObjectId(user_id)})
+    
+    def add_user(self, username, email, hashed_password):
+        new_user = {"username": username,
+                    "email": email,
+                    "password": hashed_password}
+        user_collection = self.db.get_collection("users")
+        user_collection.insert_one(new_user)

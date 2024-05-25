@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Share - Login/Register</title>
+    <title>Recipe Share</title>
     <link rel="stylesheet" href="../static/style.css" />
     <link rel="stylesheet" href="../static/login.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
@@ -11,38 +11,65 @@
 </head>
 <body>
     <header>
-        <h1>Recipe Share Login/Register</h1>
+        {% if reset is defined and reset == true %}
+            <h1>Recipe Share Password Reset</h1>
+        {% else %}
+            <h1>Recipe Share Login/Register</h1>
+        {% endif %}
     </header>
     <div id="login-dialog">
         <fieldset>
             <legend>Register or Login</legend>
-            <label for="username-text">Username</label>
-            <input id="username-text" type="text" placeholder="User name">
-            <div id = "email-div">
-                <label for="email-text">Email Address</label>
-                <input id="email-text" type="text" placeholder="Email address">
-            </div>
+            {% if reset is not defined or reset == false %}
+                <div>
+                    <label for="username-text">Username</label>
+                    <input id="username-text" type="text" placeholder="User name">
+                </div>
+
+                <div id = "email-div">
+                    <label for="email-text">Email Address</label>
+                    <input id="email-text" type="text" placeholder="Email address">
+                </div>
+            {% endif %}
+
             <label for="password-text">Password</label>
             <div class="password-div">
                 <input id="password-text" type="password" placeholder="Password">
                 <span id="eye" class="material-icons-outlined eyes">visibility</span>
             </div>
-            <div class="password-div" id="password-confirm">
-                <input id="password-confirm-text" type="password" placeholder="Confirm password"
-                    aria-label="Confirm password">
-                <span id="confirm-eye" class="material-icons-outlined eyes">visibility</span>
-            </div>
-            <div id="selection-div">
-                <button id="forgot-button">Forgot password |</button>
-                <input type="radio" id="login-select" class="select" name="select" value="login" checked>
-                <label for="login-select">Login</label><br>
-                <input type="radio" id="register-select" class="select" name="select" value="register">
-                <label for="register-select">Register</label><br>
-            </div>
+
+           {% if reset is defined and reset == true %}
+                <div class="password-div" id="password-reset">
+                    <input id="password-confirm-text" type="password" placeholder="Confirm password"
+                        aria-label="Confirm password">
+                    <span id="confirm-eye" class="material-icons-outlined eyes">visibility</span>
+                </div>
+            {% else %}
+                <div class="password-div" id="password-confirm">
+                    <input id="password-confirm-text" type="password" placeholder="Confirm password"
+                        aria-label="Confirm password">
+                    <span id="confirm-eye" class="material-icons-outlined eyes">visibility</span>
+                </div>
+
+                <div id="selection-div">
+                    <button id="forgot-button">Forgot password |</button>
+                    <input type="radio" id="login-select" class="select" name="select" value="login" checked>
+                    <label for="login-select">Login</label><br>
+                    <input type="radio" id="register-select" class="select" name="select" value="register">
+                    <label for="register-select">Register</label><br>
+                </div>
+            {% endif %}
+
         </fieldset>
-        <div id="login-buttons">
-            <button id="login-button">Login</button>
-        </div>
+        {% if reset is defined and reset == true %}
+            <div id="login-buttons">
+                <button id="login-button">Save</button>
+            </div>
+        {% else %}
+            <div id="login-buttons">
+                <button id="login-button">Save</button>
+            </div>
+        {% endif %}
     </div>
 </body>
 </html>

@@ -25,7 +25,7 @@ const eyes = [...document.getElementsByClassName("eyes")];
 eyes.forEach((item) => {
     item.addEventListener("click", (e) => {
         const passwordText = document.getElementById("password-text");
-        const passwordConfirmText = document.getElementById("password-confirm-text");
+        let passwordConfirmText = document.getElementById("password-confirm-text");
         if (e.target.id === "eye") {
             if (e.target.innerText === "visibility") {
                 e.target.innerText = "visibility_off";
@@ -49,3 +49,22 @@ eyes.forEach((item) => {
     });
 });
 
+const loginButton = document.getElementById("login-button");
+loginButton.addEventListener("click", (e) => {
+    if (e.target.innerText === "Register") {
+        // Add user
+
+    }
+    else if (e.target.innerText === "Save") {
+        // Reset password
+    }
+    else {
+        // Login user
+
+    }
+});
+
+const forgotButton = document.getElementById("forgot-button");
+forgotButton.addEventListener("click", () => {
+    // handle password reset
+});

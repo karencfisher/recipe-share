@@ -152,9 +152,12 @@ def display_recipe():
 @login_required
 def edit_recipe():
     update = request.args.get("update")
+    id = request.args.get("id")
     mode = request.args.get("mode")
     if update == "true":
-        recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
+        recipe = db.query_recipe_by_id(id)
+        if recipe["Author"] != current_user.username:
+            return jsonify({"error": "Recipe not by current user!"}), 403
     else:
         recipes.addRecipe(current_user.get_id())
         recipe = recipes.getRecipe(current_user.get_id()).get_recipe()

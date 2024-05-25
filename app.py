@@ -45,13 +45,19 @@ def login():
         return redirect("/home")
     username = request.form.get('username')
     password = request.form.get('password')
-    
+
     user = db.query_user_name(username)
     if user and bcrypt.check_password_hash(user['password'], password):
         login_user(User(user))
         return redirect('/home')
     else:
         return jsonify({"error": "Incorrect user name or password"}), 401
+    
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect('/')
 
 
 @app.route('/home')

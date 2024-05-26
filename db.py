@@ -122,4 +122,4 @@ class DB:
     def update_password(self, username, password):
         user_collection = self.db.get_collection("users")
         user_collection.update_one({"username": username}, 
-                                   {"$set$": {"password": password}})
+                                   {"$set": {"password": password}})

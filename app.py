@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, render_template, redirect
 from flask_login import login_user, current_user, logout_user, login_required
 from flask_login import UserMixin, LoginManager
 from flask_bcrypt import Bcrypt
-from urllib.parse import unquote
+from urllib.parse import unquote, urlparse
 from io import BytesIO
 from dotenv import load_dotenv
 import os
@@ -18,7 +18,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 db = DB()
 recipes = RecipeCollection()
-reset_password = ResetPassword()
+password_reset = ResetPassword()
 error_log = ErrorLog()
 bcrypt = Bcrypt()
 
@@ -90,28 +90,30 @@ def logout():
 
 
 ####### Password reset routes
-@app.route('/recover', methods=["POST"])
-def recover():
+@app.route('/request', methods=["POST"])
+def request_password():
     data = request.get_json()
     username = data.get('username')
     email = db.query_user_name(username)["email"]
     try:
-        reset_password.sendRequest(email)
-    except:
+        url_obj = urlparse(request.base_url)
+        url = f'{url_obj.scheme}://{url_obj.netloc}'
+        password_reset.sendRequest(url, email)
+    except Exception as error:
+        print(error)
         return jsonify({"error": "Unable to service request"}), 500
     return jsonify({"success": "Request sent"}), 200
 
-@app.route('/request', methods=["POST"])
-def request():
-    data = request.get_json()
-    email = data.get('email')
-    key = data.get('key')
-    if (reset_password.verifyRequest(email, key)):
+@app.route('/recover', methods=["GET"])
+def recover_password():
+    email = request.args.get('email')
+    key = request.args.get('key')
+    if (password_reset.verifyRequest(email, key)):
         return render_template("login.html", reset=True)
     else:
         return jsonify({"error": "Invalid request"}), 403
     
-@app.route('reset', methods=['POST'])
+@app.route('/reset', methods=['POST'])
 def reset_password():
     data = request.get_json()
     username = data.get("username")
@@ -120,8 +122,9 @@ def reset_password():
     try:
         db.update_password(username, hashed_password)
         email = db.query_user_name(username)['email']
-        reset_password.deleteRequest(email)
-    except:
+        password_reset.deleteRequest(email)
+    except Exception as error:
+        print(error)
         return jsonify({"error": "Error in servicing request"}), 500
     return jsonify({"success": "Password updated"}), 200
     

@@ -21,14 +21,15 @@ class ResetPassword:
                 <p>
                     You have requested to reset your Recipe Share password.
                     Assuming you requested this, click on the following link.
-                    If you did not request this, ignore it.
+                    If you did not request this, ignore this email, and there
+                    will be no changes.
                 </p>
-                <a href={url}/request?email={email_address}&key={key}>reset password</a>
+                <a href={url}/recover?email={email_address}&key={key}>reset password</a>
                 <p> If the link does not work, copy/paste the following into your
                     browser:
                 </p>
                 <pre>
-                    {url}/request?email={email_address}&key={key}
+                    {url}/recover?email={email_address}&key={key}
                 </pre>
                 <p>
                     <b>Do not reply to this email</b>
@@ -42,9 +43,6 @@ class ResetPassword:
         message["From"] = "request@recipe-share.com"
         message["To"] = email_address
         message["Subject"] = "Recipe share password reset"
-
-        # Attach the HTML part
-        message.attach(MIMEText(html, "html"))
 
         # Send the email
         with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:

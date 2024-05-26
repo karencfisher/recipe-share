@@ -97,7 +97,20 @@ loginButton.addEventListener("click", async (e) => {
 
     }
     else if (e.target.innerText === "Save") {
-        // Reset password
+        const usernameText = document.getElementById("username-text").value;
+        const passwordText = document.getElementById("password-text").value;
+        const passwordConfirmText = document.getElementById("password-confirm-text").value;
+
+        if (passwordText !== passwordConfirmText) {
+            displayError("error", "Passwords do not match");
+            return;
+        }
+
+        query = {
+            "username": usernameText,
+            "password": passwordText
+        };
+        result = await callRoute("/reset", query)
     }
     else {
         const usernameText = document.getElementById("username-text").value;
@@ -115,6 +128,9 @@ loginButton.addEventListener("click", async (e) => {
     else if (result.status === 400) {
         displayError("error", "Username is already in use")
     }
+    else if (result.status === 500) {
+        displayError("error", "Error occured servicing request")
+    }
     else if (e.target.innerText === "Register" && result.status === 200) {
         displayError("info", "Sign up successfull. You may now login.")
     }
@@ -124,8 +140,16 @@ loginButton.addEventListener("click", async (e) => {
 });
 
 const forgotButton = document.getElementById("forgot-button");
-forgotButton.addEventListener("click", () => {
-    // handle password reset
+forgotButton.addEventListener("click", async () => {
+    const username = document.getElementById("username-text").value;
+    query = {"username": username};
+    result = await callRoute("/request", query);
+    if (result.status === 500) {
+        displayError("error", "Error processing request.")
+    }
+    else {
+        displayError("success", "Check email for password reset.")
+    }
 });
 
 function displayError(type, msg) {

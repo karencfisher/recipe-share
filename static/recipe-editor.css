@@ -1,0 +1,31 @@
+#warning-dialog {
+    position: fixed;
+    top: -600px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: var(--widget-background-color);
+    padding: 10px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    box-shadow: 8px 8px 8px rgba(20, 20, 20, .5), 5px 5px 5px rgba(20, 20, 20, .8);
+}
+
+#warning-dialog[data-open="true"] {
+    top: 33%;
+}
+
+#warning-text {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#warning-text > span {
+    font-size: 2rem;
+}
+
+#warning-buttons {
+    align-self: flex-end;
+}

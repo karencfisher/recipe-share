@@ -2,6 +2,12 @@
 const titleText = document.getElementById("title");
 titleText.focus();
 
+// track changes
+let dirty = false;
+addEventListener("change", () => {
+    dirty = true;
+});
+
 /* Add/remove items ******************************/
 function focusNext(item, textBox) {
     if (item.nextElementSibling) {
@@ -279,7 +285,13 @@ function buildRecipe(complete) {
 }
 
 backButton.addEventListener("click", () => {
-    history.back();
+    if (dirty) {
+        const warningDialog = document.getElementById("warning-dialog");
+        warningDialog.dataset.open = "true";
+    }
+    else {
+        history.back();
+    }
 });
 
 previewButton.addEventListener("click", () => {
@@ -310,6 +322,7 @@ previewButton.addEventListener("click", () => {
 publishButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
     if (recipe != undefined) {
+        dirty = false;
         fetch('/update', {
             method: 'POST',
             headers: {
@@ -383,4 +396,17 @@ helpButton.addEventListener("click", (e) => {
         help.style.setProperty("display", "none");
         e.target.innerHTML = "Show editing help";
     }
+});
+
+const warningButtons = [...document.getElementsByClassName("warning-button")];
+warningButtons.forEach((item) => {
+    item.addEventListener("click", (e) => {
+        if (e.target.id === "warning-ok-button") {
+            history.back();
+        }
+        else {
+            const warningDialog = document.getElementById("warning-dialog");
+            warningDialog.dataset.open = "false";
+        }
+    });
 });

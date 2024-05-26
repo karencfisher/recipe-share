@@ -148,7 +148,7 @@ forgotButton.addEventListener("click", async () => {
         displayError("error", "Error processing request.")
     }
     else {
-        displayError("success", "Check email for password reset.")
+        displayError("success", "Email has been sent with instructions to reset your password.")
     }
 });
 

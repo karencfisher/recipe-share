@@ -9,7 +9,7 @@ import os
 
 from recipe import RecipeCollection
 from db import DB
-from utils import generateDescription, ErrorLog
+from utils import generateDescription, ErrorLog, ResetPassword
 
 
 load_dotenv()
@@ -18,6 +18,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 db = DB()
 recipes = RecipeCollection()
+reset_password = ResetPassword()
 error_log = ErrorLog()
 bcrypt = Bcrypt()
 
@@ -48,6 +49,7 @@ def start():
     return render_template("login.html", reset=False)
 
 
+####### registration/login routes
 @app.route('/register', methods=["POST"])
 def register():
     if current_user.is_authenticated:
@@ -65,7 +67,6 @@ def register():
     db.add_user(username, email, hashed_password)
     return jsonify({"success": "Your account is now created"}), 200
 
-
 @app.route('/login', methods=['POST'])
 def login():
     if current_user.is_authenticated:
@@ -80,7 +81,6 @@ def login():
         return redirect('/home')
     else:
         return jsonify({"error": "Incorrect user name or password"}), 401
-    
 
 @app.route('/logout')
 def logout():
@@ -89,6 +89,44 @@ def logout():
     return redirect('/')
 
 
+####### Password reset routes
+@app.route('/recover', methods=["POST"])
+def recover():
+    data = request.get_json()
+    username = data.get('username')
+    email = db.query_user_name(username)["email"]
+    try:
+        reset_password.sendRequest(email)
+    except:
+        return jsonify({"error": "Unable to service request"}), 500
+    return jsonify({"success": "Request sent"}), 200
+
+@app.route('/request', methods=["POST"])
+def request():
+    data = request.get_json()
+    email = data.get('email')
+    key = data.get('key')
+    if (reset_password.verifyRequest(email, key)):
+        return render_template("login.html", reset=True)
+    else:
+        return jsonify({"error": "Invalid request"}), 403
+    
+@app.route('reset', methods=['POST'])
+def reset_password():
+    data = request.get_json()
+    username = data.get("username")
+    password = data.get("password")
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+    try:
+        db.update_password(username, hashed_password)
+        email = db.query_user_name(username)['email']
+        reset_password.deleteRequest(email)
+    except:
+        return jsonify({"error": "Error in servicing request"}), 500
+    return jsonify({"success": "Password updated"}), 200
+    
+
+####### protected recipe routes
 @app.route('/home')
 @login_required
 def home():
@@ -100,13 +138,6 @@ def home():
         return jsonify({"error": "Internal server error"}), 500
     return render_template("home.html", recent=recent, contributions=contribs, 
                            username=current_user.username)
-
-
-@app.route('/profile')
-@login_required
-def profile():
-    pass
-
 
 @app.route('/search')
 @login_required
@@ -134,7 +165,6 @@ def queryDb():
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
     
-    
 @app.route('/display')
 @login_required
 def display_recipe():
@@ -148,7 +178,6 @@ def display_recipe():
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
     
-
 @app.route('/edit')
 @login_required
 def edit_recipe():
@@ -164,7 +193,6 @@ def edit_recipe():
         recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
     return render_template("recipe-editor.html", recipe=recipe, mode=mode)
 
-
 @app.route('/update', methods=['POST'])
 @login_required
 def insert_db():
@@ -178,15 +206,13 @@ def insert_db():
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
     
-
 @app.route('/preview')
 @login_required
 def preview_recipe():
     mode = request.args.get("mode")
     recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
     return render_template("recipe-page.html", recipe=recipe, mode=mode, preview=True)
-
-    
+ 
 @app.route('/publish')
 @login_required
 def publish_recipe():
@@ -197,7 +223,6 @@ def publish_recipe():
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
-
 
 @app.route('/generate', methods=['POST'])
 @login_required
@@ -210,7 +235,6 @@ def generate_description():
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
-
 
 @app.route('/printable')
 @login_required

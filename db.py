@@ -118,3 +118,8 @@ class DB:
                     "password": hashed_password}
         user_collection = self.db.get_collection("users")
         user_collection.insert_one(new_user)
+
+    def update_password(self, username, password):
+        user_collection = self.db.get_collection("users")
+        user_collection.update_one({"username": username}, 
+                                   {"$set$": {"password": password}})

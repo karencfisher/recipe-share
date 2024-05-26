@@ -6,18 +6,18 @@ from PIL import Image
 
 class RecipeCollection:
     def __init__(self):
-        self.collection = {}
+        self.__collection = {}
 
     def addRecipe(self, user_id, recipe_obj=None):
         recipe = Recipe()
         recipe.create_recipe(recipe=recipe_obj)
-        self.collection[user_id] = recipe
+        self.__collection[user_id] = recipe
 
     def getRecipe(self, user_id):
-        return self.collection[user_id]
+        return self.__collection[user_id]
     
     def deleteRecipe(self, user_id):
-        self.collection.pop(user_id, None)
+        self.__collection.pop(user_id, None)
     
 
 class Recipe:

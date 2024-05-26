@@ -92,3 +92,9 @@ logoutButton.addEventListener("click", async () => {
     result = await fetch("/logout");
     window.location.href = result.url;
 });
+
+const notmeButton = document.getElementById("notyou-button");
+notmeButton.addEventListener("click", async () => {
+    result = await fetch("/logout");
+    window.location.href = result.url;
+});

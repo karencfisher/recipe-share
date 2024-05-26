@@ -40,10 +40,12 @@ button {
     background: var(--widget-background-color);
     height: 2rem;
     color: var(--font-color);
+    cursor: pointer;
 }
 
-button:focus {
+button:hover {
     background: var(--widget-focus-background-color);
+    color: red;
 }
 
 button#help-button {
@@ -200,7 +202,7 @@ img {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
-    align-content: center;
+    align-content: baseline;
 }
 
 #error-message {

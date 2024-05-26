@@ -78,6 +78,10 @@ class DB:
     def query_recipes_added(self, max_found):
         results = self.collection.find().sort("Added", -1).limit(max_found)
         return self.__extract_results(results)
+    
+    def query_recipes_by_user(self, author):
+        results = self.collection.find({"Author": author})
+        return self.__extract_results(results)
 
     def query_recipe_by_id(self, id):
         recipe = self.collection.find_one({"_id": ObjectId(id)})

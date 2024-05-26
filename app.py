@@ -93,12 +93,13 @@ def logout():
 @login_required
 def home():
     try:
-        recent = results = db.query_recipes_added(int(5))
-        views = db.query_recipes_top_views(int(5))
+        recent = db.query_recipes_added(int(5))
+        contribs = db.query_recipes_by_user(current_user.username)
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
-    return render_template("home.html", recent=recent, views=views)
+    return render_template("home.html", recent=recent, contributions=contribs, 
+                           username=current_user.username)
 
 
 @app.route('/profile')

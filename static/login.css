@@ -37,13 +37,13 @@ fieldset {
 }
 
 .eyes:hover, button:hover, #selection-div > label:hover {
-    color: cornflowerblue;
+    color: red;
 }
 
 #selection-div {
     display: flex;
-    gap: 5px;
-    align-items: center;
+    gap: 10px;
+    align-items: baseline;
     justify-content: flex-end;
 }
 

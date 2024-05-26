@@ -1,22 +1,56 @@
 a {
     font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: .8rem;
     color: var(--font-color);
+}
+
+a:hover {
+    color: red;
 }
 
 h3 {
     padding-left: 3px;
 }
 
-span {
-    font-size: .8rem;
+
+
+button {
+    cursor: pointer;
+}
+
+button:hover {
+    color: red;
 }
 
 .link {
     height: 3em;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.link:hover {
+    background-color: var(--widget-focus-background-color);
+}
+
+.contrib {
+    font: 1.2rem;
 }
 
 #contribute {
-    min-height: 0px;
+    min-height: fit-content;
 }
 
+#logged-in {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+#notyou-button {
+    border: none;
+    padding: 0;
+    margin: 0;
+    display: inline;
+    background-color: transparent;
+
+}

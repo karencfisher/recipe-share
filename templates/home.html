@@ -6,46 +6,30 @@
     <title>Recipe share - Home</title>
     <link rel="stylesheet" href="../static/style.css" />
     <link rel="stylesheet" href="../static/home.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <script src="../static/home.js" defer></script>
     <script>
         function decorate(element) {
             const el = document.getElementById(element);
-                el.addEventListener("click", (e) => {
-                    e.preventDefault();
-                    const uri = e.target.getAttribute("href") + `&mode=${document.body.className}`
-                    location.href = uri;
-                });
-
-            // Adjust title length
-            const titleWords = el.innerHTML.split(" ");
-            let title = "";
-            if (titleWords.length > 7) {
-                title = titleWords.slice(0, 7).join(" ") + "...";
-            }
-            else {
-                title = titleWords.join(" ");
-            }
-            el.innerHTML = title;
+            el.addEventListener("click", (e) => {
+                e.preventDefault();
+                const uri = el.getAttribute("href") + `&mode=${document.body.className}`
+                location.href = uri;
+            });
         }
     </script>
 </head>
 <body class="light-mode">
     <header>
-        <h1>Recipe Share</h1>
+        <h1>Welcome to Recipe Share</h1>
     </header>
     <main>
         <div class="column" id="left-column">
-            <section>
-                <h3>Welcome to Recipe Share</h3>
-                <p>
-                    Who doesn't like food? Who does not like trying out new dishes?
-                </p>
-                <p>
-                    This site is a demo of a web application for finding and sharing recipes. You
-                    can search for recipes in the database, or add your own (at present, anonymously).
-                    This is a preliminary release, so it will hopefully become more featured in 
-                    the not too distant future. 
-                </p>
+            <section id="logged-in">
+                <h3>
+                    Logged in as {{ username }}
+                </h3>
+                <button id="notyou-button">Not you? Logout</button>
             </section>
             <section>
                 <h3>Contribute your own recipe!</h3>
@@ -54,7 +38,48 @@
                     culinary expolit with the world. Open the Recipe Editor clicking below to begin.
                     <button id="contribute-button">I want to contribute!</button>
                 </div>
-            </section>   
+            </section>
+            <section>
+                <h3>My Contributions</h3>
+                <div class="container" id="user-contributions">
+                    {% set count = namespace(value=1) %}
+                    {% for item in contributions %}   
+                        <div class="link">
+                            <a id="edit-contrib{{ count.value }}" 
+                                href="/edit?id={{ item.id }}&update=true">
+                                <span class="material-icons-outlined">edit</span>
+                            </a> 
+                            <a id="contrib{{ count.value }}" 
+                                href="/display?id={{ item.id }}">
+                                {{ item.title }}
+                            </a>
+                        </div>
+                        <script>
+                            decorate("edit-contrib{{ count.value }}");
+                            decorate("contrib{{ count.value }}");
+                        </script>
+                        {% set count.value = count.value + 1 %}
+                    {% endfor %}
+                </div>
+            </section> 
+        </div>
+        <div class="column" id="right-column">
+            <section>
+                <h3>
+                    Most Recent Contributions
+                </h3>
+                <div class="container" id="recent">
+                    {% set count = namespace(value=1) %}
+                    {% for item in recent %}
+                        <div class="link">
+                            <a id="recent{{ count.value }}" 
+                                href="/display?id={{ item.id }}">{{ item.title }}</a><br /> 
+                        </div>
+                        <script>decorate("recent{{ count.value }}")</script>
+                        {% set count.value = count.value + 1 %}
+                    {% endfor %}
+                </div>
+            </section>
             <section>
                 <h3>
                     Search
@@ -66,49 +91,12 @@
                 </div>
                 <div class="container" id="results"></div>
             </section>
-        </div>
-
-        <div class="column" id="right-column">
-            <section>
-                <h3>
-                    Most Recent Contributions
-                </h3>
-                <div class="container" id="recent">
-                    {% set count = namespace(value=1) %}
-                    {% for item in recent %}
-                        <div class="link">
-                            <a  id="recent{{ count.value }}" 
-                                href="/display?id={{ item.id }}">{{ item.title }}</a><br /> 
-                            <span>{{ item.views }} views</span>
-                        </div>
-                        <script>decorate("recent{{ count.value }}")</script>
-                        {% set count.value = count.value + 1 %}
-                    {% endfor %}
-                </div>
-            </section>
-            <section>
-                <h3>
-                    Most Popular Contributions
-                </h3>
-                <div class="container" id="views">
-                    {% set count = namespace(value=1) %}
-                    {% for item in views %}
-                        <div class="link">
-                            <a id="views{{ count.value }}" 
-                                href="/display?id={{ item.id }}">{{ item.title }}</a><br /> 
-                            <span>{{ item.views }} views</span>
-                        </div>
-                        <script>decorate("views{{ count.value }}")</script>
-                        {% set count.value = count.value + 1 %}
-                    {% endfor %}
-                </div>
-            </section>
+            <button id="logout-button">Logout</button>
         </div>
     </main>
 
     <footer>
         <div id="choices">
-            <button id="logout-button">Logout</button>
             <div class="choice" id="theme">
                 <input type="checkbox" id="darkmode" aria-label="toggle darkmode" aria-checked="false">
                 <label for="darkmode">Dark mode</label>

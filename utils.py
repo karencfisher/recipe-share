@@ -33,6 +33,7 @@ class ResetPassword:
                 </pre>
                 <p>
                     <b>Do not reply to this email</b>
+                </p>
             </body>
         </html>
         """

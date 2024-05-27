@@ -26,7 +26,7 @@ message["Subject"] = subject
 # Attach the HTML part
 message.attach(MIMEText(html, "html"))
 
-with smtplib.SMTP("sandbox.smtp.mailtrap.io", 2525) as server:
+with smtplib.SMTP("sandbox.smtp.mailtrap.io", 587) as server:
     server.starttls()
     server.login("26a65f99e3c29b", "7b4dfcd976cebb")
     server.sendmail(sender, receiver, message)

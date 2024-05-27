@@ -29,7 +29,7 @@
                 <h3>
                     Logged in as {{ username }}
                 </h3>
-                <button id="notyou-button">Not you? Logout</button>
+                <button id="notyou-button">Not {{ username }}? Logout</button>
             </section>
             <section>
                 <h3>Contribute your own recipe!</h3>
@@ -39,34 +39,36 @@
                     <button id="contribute-button">I want to contribute!</button>
                 </div>
             </section>
-            <section>
-                <h3>My Contributions</h3>
-                <div class="container" id="user-contributions">
-                    {% set count = namespace(value=1) %}
-                    {% for item in contributions %}   
-                        <div class="link">
-                            <a id="edit-contrib{{ count.value }}" 
-                                href="/edit?id={{ item.id }}&update=true">
-                                <span class="material-icons-outlined">edit</span>
-                            </a> 
-                            <a id="contrib{{ count.value }}" 
-                                href="/display?id={{ item.id }}">
-                                {{ item.title }}
-                            </a>
-                        </div>
-                        <script>
-                            decorate("edit-contrib{{ count.value }}");
-                            decorate("contrib{{ count.value }}");
-                        </script>
-                        {% set count.value = count.value + 1 %}
-                    {% endfor %}
-                </div>
-            </section> 
+            {% if contributions | length > 0 %}
+                <section>
+                    <h3>My Contributions</h3>
+                    <div class="container" id="user-contributions">
+                        {% set count = namespace(value=1) %}
+                        {% for item in contributions %}   
+                            <div class="link">
+                                <a id="edit-contrib{{ count.value }}" 
+                                    href="/edit?id={{ item.id }}&update=true">
+                                    <span class="material-icons-outlined">edit</span>
+                                </a> 
+                                <a id="contrib{{ count.value }}" 
+                                    href="/display?id={{ item.id }}">
+                                    {{ item.title }}
+                                </a>
+                            </div>
+                            <script>
+                                decorate("edit-contrib{{ count.value }}");
+                                decorate("contrib{{ count.value }}");
+                            </script>
+                            {% set count.value = count.value + 1 %}
+                        {% endfor %}
+                    </div>
+                </section> 
+            {% endif %}
         </div>
         <div class="column" id="right-column">
             <section>
                 <h3>
-                    Most Recent Contributions
+                    Most Recent Contributions By Others
                 </h3>
                 <div class="container" id="recent">
                     {% set count = namespace(value=1) %}
@@ -106,5 +108,10 @@
             </div>
         </div>
     </footer>    
+
+    <div id="error-msg" data-open="false">
+        <span class="material-icons-outlined" id="msg-icon">error_outline</span>
+        <div id="error-txt">An error happened</div>
+    </div>
 </body>
 </html>

@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recipe Share</title>
-    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="../static/style.css">
     <link rel="stylesheet" href="../static/login.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <script src="../static/login.js" defer></script>
 </head>
-<body>
+<body class="light-mode">
     <header>
         {% if reset is defined and reset == true %}
             <h1>Recipe Share Password Reset</h1>
@@ -17,7 +17,7 @@
             <h1>Recipe Share Login/Register</h1>
         {% endif %}
     </header>
-    <div id="login-dialog">
+    <main>
         <fieldset>
             {% if reset is defined and reset == true %}
                 <legend>Reset Password</legend>
@@ -74,7 +74,7 @@
                 <button id="login-button">Login</button>
             </div>
         {% endif %}
-    </div>
+        </main>
 
     <div id="error-msg" data-open="false">
         <span class="material-icons-outlined" id="msg-icon">error_outline</span>

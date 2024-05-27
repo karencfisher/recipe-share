@@ -171,3 +171,9 @@ function displayError(type, msg) {
     }, 2000);
 }
 
+addEventListener("load", () => { 
+    const pick = Math.floor(Math.random() * 10);
+    const img = `url(static/background-images/food${pick}.jpg)`
+    document.body.style.setProperty("background-image", img);
+});
+

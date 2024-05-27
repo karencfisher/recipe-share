@@ -1,13 +1,5 @@
-#login-dialog {
-    display: flex;
-    flex-direction: column;
+main {
     gap: 10px;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 10px;
-    background-color: var(--widget-background-color);
-    padding: 10px;
-    width: calc(var(--region-width) + 20px);
 }
 
 fieldset {
@@ -32,11 +24,11 @@ fieldset {
     display: none;
 }
 
-.eyes, button, .select, #selection-div > label {
+.eyes, .select, #selection-div > label {
     cursor: pointer;
 }
 
-.eyes:hover, button:hover, #selection-div > label:hover {
+.eyes:hover, #selection-div > label:hover {
     color: red;
 }
 
@@ -52,34 +44,11 @@ fieldset {
     padding: 0;
     margin: 0;
     display: inline;
+    background-color: transparent;
 }
 
 #login-buttons {
     align-self: flex-end;
-}
-
-#error-msg {
-    position: fixed;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    top: -600px;
-    z-index: 9999;
-    width: fit-content;
-    height: 50px;
-    border-style: solid;
-    border-width: 1px;
-    border-radius: 5px;
-    background-color: rgb(230, 161, 121);
-    padding: 10px;
-}
-
-#error-msg[data-open="true"] {
-    top: 20%;
-}
-
-#error-msg > span {
-    font-size: 2rem;
 }
 
 @media screen and (min-width: 768px) {

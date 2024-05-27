@@ -35,7 +35,7 @@ searchButton.addEventListener("click", () => {
     })
     .then(response => response.json())
     .then(data => loadRecipes("results", data))
-    .catch(error => console.error('Error:', error));
+    .catch(error => displayError('error', error));
 });
 
 searchText.addEventListener("keypress", (e) => {
@@ -45,7 +45,7 @@ searchText.addEventListener("keypress", (e) => {
         })
         .then(response => response.json())
         .then(data => loadRecipes("results", data))
-        .catch(error => console.error('Error:', error));
+        .catch(error => displayError('Error', error));
     }
 });
 
@@ -97,4 +97,29 @@ const notmeButton = document.getElementById("notyou-button");
 notmeButton.addEventListener("click", async () => {
     result = await fetch("/logout");
     window.location.href = result.url;
+});
+
+function displayError(type, msg) {
+    const errorMsg = document.getElementById("error-msg");
+    const errortxt = document.getElementById("error-txt");
+    const msgIcon = document.getElementById("msg-icon");
+    if (type === "info") {
+        msgIcon.innerText = "info";
+    }
+    else {
+        msgIcon.innerText = "error_outline";
+    }
+
+    errortxt.innerText = msg;
+    errorMsg.dataset.open = "true";
+
+    setTimeout(() => {
+        errorMsg.dataset.open = "false";
+    }, 2000);
+}
+
+addEventListener("load", () => { 
+    const pick = Math.floor(Math.random() * 10);
+    const img = `url(static/background-images/food${pick}.jpg)`
+    document.body.style.setProperty("background-image", img);
 });

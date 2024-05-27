@@ -75,8 +75,8 @@ class DB:
         results = self.collection.find().sort("Views", -1).limit(max_found)
         return self.__extract_results(results)
     
-    def query_recipes_added(self, max_found):
-        results = self.collection.find().sort("Added", -1).limit(max_found)
+    def query_recipes_added(self, max_found, author):
+        results = self.collection.find({"Author": {"$ne": author}}).sort("Added", -1).limit(max_found)
         return self.__extract_results(results)
     
     def query_recipes_by_user(self, author):

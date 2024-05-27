@@ -1,5 +1,7 @@
 body {
     align-items: flex-start;
+    background-color: white;
+    --region-width: 500px;
 }
 
 main {
@@ -9,6 +11,7 @@ main {
     margin: 10px;
     padding: 0px;
     width: calc(var(--region-width) * 2);
+    background-color: white;
 }
 
 h1 {

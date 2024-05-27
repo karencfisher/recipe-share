@@ -39,16 +39,25 @@ class ResetPassword:
         """
 
         # Create a multipart message and set headers
-        sender = "karencfisher447@gmail.com"
         message = MIMEText(html, 'html')
-        message["From"] = "request@recipe-share.com"
+        sender_email = "NOREPLY@recipe-share.app"
+        port = 587
+        smtp_server = "live.smtp.mailtrap.io"
+    
+        message["From"] = "NOREPLY@recipe-share.com"
         message["To"] = email_address
         message["Subject"] = "Recipe share password reset"
 
-        # Send the email
-        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp_server:
-            smtp_server.login(sender, self.smtp_password)
-            smtp_server.sendmail(sender, [email_address], message.as_string())       
+       # Send the email
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.starttls()
+            server.login("api", self.smtp_password)
+            server.sendmail(sender_email, email_address, message.as_string()) 
+
+        """ with smtplib.SMTP("sandbox.smtp.mailtrap.io", 2525) as server:
+            server.starttls()
+            server.login("26a65f99e3c29b", self.smtp_password)
+            server.sendmail(sender_email, email_address, message)  """    
 
     def verifyRequest(self, email_address, key):
         return self.__resetRequests[email_address] == key

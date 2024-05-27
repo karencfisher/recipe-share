@@ -134,7 +134,7 @@ def reset_password():
 @login_required
 def home():
     try:
-        recent = db.query_recipes_added(int(5))
+        recent = db.query_recipes_added(int(5), current_user.username)
         contribs = db.query_recipes_by_user(current_user.username)
     except Exception as ex:
         error_log.log_error(ex)
@@ -159,7 +159,7 @@ def queryDb():
             max_found = request.args.get("max_found")
             results = db.query_recipes_top_views(int(max_found))
         elif method == "recent":
-            max_found = request.args.get("max_found")
+            max_found = request.args.get("max_found", current_user.username)
             results = db.query_recipes_added(int(max_found))
         else:
             raise Exception("Invalid method")

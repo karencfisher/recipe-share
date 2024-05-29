@@ -271,7 +271,7 @@ img {
 
     #recipe-title > .input-field {
         margin-bottom: 30px;
-        min-width: calc(var(--region-width) * 2 - 20px);
+        min-width: calc(var(--region-width) * 2 + 20px);
     }
 
     #description {
@@ -279,7 +279,7 @@ img {
     }
 
     #error-message {
-        min-width: calc(var(--region-width) * 2 - 20px);
+        min-width: calc(var(--region-width) * 2 + 20px);
     }
 }
 

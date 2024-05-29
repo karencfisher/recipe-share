@@ -52,12 +52,7 @@ class ResetPassword:
         with smtplib.SMTP(smtp_server, port) as server:
             server.starttls()
             server.login("api", self.smtp_password)
-            server.sendmail(sender_email, email_address, message.as_string()) 
-
-        """ with smtplib.SMTP("sandbox.smtp.mailtrap.io", 2525) as server:
-            server.starttls()
-            server.login("26a65f99e3c29b", self.smtp_password)
-            server.sendmail(sender_email, email_address, message)  """    
+            server.sendmail(sender_email, email_address, message.as_string())   
 
     def verifyRequest(self, email_address, key):
         return self.__resetRequests[email_address] == key

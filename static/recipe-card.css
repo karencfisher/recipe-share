@@ -1,7 +1,7 @@
 body {
     align-items: flex-start;
     background-color: white;
-    --region-width: 500px;
+    --region-width: 350px;
 }
 
 main {

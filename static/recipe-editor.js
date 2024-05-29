@@ -286,13 +286,31 @@ function buildRecipe(complete) {
 
 backButton.addEventListener("click", () => {
     if (dirty) {
-        const warningDialog = document.getElementById("warning-dialog");
-        warningDialog.dataset.open = "true";
+        showChangedDialog((confirmed) => {
+            if (confirmed) {
+                history.back();
+            }
+        });
     }
-    else {
+    else { 
         history.back();
     }
-});
+}); 
+
+function showChangedDialog(callback) {
+    const changedDialog = document.getElementById("changed-dialog");
+    changedDialog.dataset.open = "true";
+
+    document.getElementById("changed-cancel-button").addEventListener("click", () => {
+        callback(false);
+        changedDialog.dataset.open = "false";
+    });
+   
+    document.getElementById("changed-ok-button").addEventListener("click", () => {
+        callback(true);
+        changedDialog.dataset.open = "false";
+    });
+}
 
 previewButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
@@ -406,19 +424,6 @@ helpButton.addEventListener("click", (e) => {
         help.style.setProperty("display", "none");
         e.target.innerHTML = "Show editing help";
     }
-});
-
-const warningButtons = [...document.getElementsByClassName("warning-button")];
-warningButtons.forEach((item) => {
-    item.addEventListener("click", (e) => {
-        if (e.target.id === "warning-ok-button") {
-            history.back();
-        }
-        else {
-            const warningDialog = document.getElementById("warning-dialog");
-            warningDialog.dataset.open = "false";
-        }
-    });
 });
 
 addEventListener("load", () => { 

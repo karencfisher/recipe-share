@@ -136,11 +136,19 @@ def home():
     try:
         recent = db.query_recipes_added(int(5), current_user.username)
         contribs = db.query_recipes_by_user(current_user.username)
+        user = db.query_user_name(current_user.username)
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
     return render_template("home.html", recent=recent, contributions=contribs, 
-                           username=current_user.username)
+                           username=user['username'], mode=user['display_mode'])
+
+@app.route('/update_state', methods=['GET'])
+@login_required
+def update_state():
+    mode = request.args.get("mode")
+    db.update_mode(current_user.username, mode)
+    return jsonify({"success": "updated state"}), 200
 
 @app.route('/search')
 @login_required
@@ -151,16 +159,8 @@ def queryDb():
             query = unquote(request.args.get("query"))
             max_found = request.args.get("max_found")
             results = db.semantic_query(query, int(max_found))
-        elif method == "tags":
-            tags = unquote(request.args.get("tags")).split(",")
-            max_found = request.args.get("max_found")
-            results = db.query_recipes_by_tags(tags, int(max_found))
-        elif method == "views":
-            max_found = request.args.get("max_found")
-            results = db.query_recipes_top_views(int(max_found))
-        elif method == "recent":
-            max_found = request.args.get("max_found", current_user.username)
-            results = db.query_recipes_added(int(max_found))
+        elif method == "contribs":
+            results = db.query_recipes_by_user(current_user.username);
         else:
             raise Exception("Invalid method")
         return jsonify(results), 200

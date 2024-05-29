@@ -1,4 +1,4 @@
-#warning-dialog {
+#changed-dialog {
     position: fixed;
     top: -600px;
     display: flex;
@@ -12,21 +12,21 @@
     box-shadow: 8px 8px 8px rgba(20, 20, 20, .5), 5px 5px 5px rgba(20, 20, 20, .8);
 }
 
-#warning-dialog[data-open="true"] {
+#changed-dialog[data-open="true"] {
     top: 33%;
 }
 
-#warning-text {
+#changed-text {
     display: flex;
     gap: 10px;
     align-items: center;
 }
 
-#warning-text > span {
+#changed-text > span {
     font-size: 2rem;
 }
 
-#warning-buttons {
+#changed-buttons {
     align-self: flex-end;
 }
 

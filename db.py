@@ -9,7 +9,7 @@ from datetime import datetime
 from PIL import Image
 
 
-TEST = True
+TEST = False
 
 class DB:
     def __init__(self):
@@ -123,3 +123,10 @@ class DB:
         user_collection = self.db.get_collection("users")
         user_collection.update_one({"username": username}, 
                                    {"$set": {"password": password}})
+        
+    def update_mode(self, username, mode):
+        user_collection = self.db.get_collection("users")
+        user_collection.update_one({"username": username}, 
+                                   {"$set": {"display_mode": mode}})
+    
+

@@ -14,12 +14,14 @@
             el.addEventListener("click", (e) => {
                 e.preventDefault();
                 const uri = el.getAttribute("href") + `&mode=${document.body.className}`
+                history.replaceState({page: 'currentPage', mode: document.body.className}, 
+                    "", window.location.href);
                 location.href = uri;
             });
         }
     </script>
 </head>
-<body class="light-mode">
+<body class="{{ mode }}">
     <header>
         <h1>Welcome to Recipe Share</h1>
     </header>

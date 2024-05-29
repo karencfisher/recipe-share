@@ -6,22 +6,27 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    background: var(--background-color);
+    background-color: rgb(31, 29, 29);
     font-family:'Gill Sans', Calibri, 'Trebuchet MS', sans-serif;
     color: var(--font-color);
-    --region-width: 330px;
+    --region-width: 100%;
+
+    background-size: cover;
+    background-attachment: fixed;
+    background-blend-mode:screen;
+    background-position-x: center;
 }
 
 body.light-mode {
-    --background-color: rgb(255, 255, 255);
-    --widget-background-color: rgb(230, 213, 213);
-    --widget-focus-background-color: rgb(238, 193, 97);
+    --background-color: rgba(197, 208, 224, .8);
+    --widget-background-color: rgb(192, 179, 179);
+    --widget-focus-background-color: rgb(240, 206, 133);
     --border-color: rgb(124, 15, 15);
     --font-color: rgb(73, 5, 5);
 }
 
 body.dark-mode {
-    --background-color: rgb(20, 20, 20);
+    --background-color: rgba(20, 20, 20, .7);
     --widget-background-color: rgb(50, 50, 50);
     --widget-focus-background-color: rgb(29, 36, 122);
     --border-color: rgb(124, 250, 250);
@@ -40,10 +45,17 @@ button {
     background: var(--widget-background-color);
     height: 2rem;
     color: var(--font-color);
+    cursor: pointer;
+}
+
+button:hover {
+    background: var(--widget-focus-background-color);
+    color: red;
 }
 
 button:focus {
     background: var(--widget-focus-background-color);
+    color: red;
 }
 
 button#help-button {
@@ -52,7 +64,7 @@ button#help-button {
 }
 
 header {
-    width: calc(var(--region-width) + 20px);
+    width: var(--region-width);
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -61,6 +73,7 @@ header {
     border-radius: 10px;
     border-color: var(--border-color);
     margin: 0px 0px 10px 0px;
+    background-color: var(--background-color);
 }
 
 main, footer {
@@ -70,16 +83,14 @@ main, footer {
     border-color: var(--border-color);
     margin-bottom: 10px;
     padding: 20px;
+    background-color: var(--background-color);
+    width: var(--region-width);
 }
 
 main {
     display: flex;
     flex-direction: column;
     column-gap: 20px;
-}
-
-footer {
-    width: calc(var(--region-width) + 20px);
 }
 
 img {
@@ -93,13 +104,15 @@ img {
     border-radius: 10px;
     padding: 25px;
     background: var(--widget-background-color);
+    width: 100%;
 }
 
 .column {
     display: flex;
     flex-direction: column;
-    width: calc(var(--region-width) - 20px);
+    width: var(--region-width);
     justify-content: flex-start;
+    margin: 0;
 }
 
 .input-field {
@@ -200,18 +213,38 @@ img {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
-    align-content: center;
+    align-content: baseline;
 }
 
-#error-message {
+#error-msg {
     position: fixed;
-    padding: 10px;
-    min-width: calc(var(--region-width) - 20px);
-    top: -1000px;
-    background: var(--widget-focus-background-color);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    top: -600px;
+    z-index: 9999;
+    width: fit-content;
+    height: 50px;
     border-style: solid;
-    border-color: var(--border-color);
-    border-radius: 10px;
+    border-width: 1px;
+    border-radius: 5px;
+    background-color: var(--widget-focus-background-color);
+    padding: 10px;
+}
+
+#error-msg[data-open="true"] {
+    top: 20%;
+}
+
+#error-msg > span {
+    font-size: 2rem;
+}
+
+@media screen and (min-width: 900px) {
+    body {
+        --region-width: 600px;
+        
+    }
 }
 
 @media screen and (min-width: 768px) {
@@ -224,20 +257,21 @@ img {
     }
 
     header {
-        width: calc(var(--region-width) * 2 + 20px);
+        width: calc(var(--region-width) * 2 + 62px);
     }
 
     footer {
-        width: calc(var(--region-width) * 2 + 20px);
+        width: calc(var(--region-width) * 2 + 62px);
     }
 
     main {
         flex-direction: row;
+        width: calc(var(--region-width) * 2 + 62px)
     }
 
     #recipe-title > .input-field {
         margin-bottom: 30px;
-        min-width: calc(var(--region-width) * 2 - 20px);
+        min-width: calc(var(--region-width) * 2 + 20px);
     }
 
     #description {
@@ -245,6 +279,7 @@ img {
     }
 
     #error-message {
-        min-width: calc(var(--region-width) * 2 - 20px);
+        min-width: calc(var(--region-width) * 2 + 20px);
     }
 }
+

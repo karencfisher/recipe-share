@@ -37,7 +37,7 @@
         }
     </style>
 </head>
-<body class="{{ mode }}"></body>
+<body class="{{ mode }}">
     <header>
         <h1>{{recipe.Title}}</h1>
     </header>
@@ -94,6 +94,7 @@
 
             <section id="meta-data"></section>
                     <h3 id="metalabel">Meta data</h3>
+                    <div>Author: {{ recipe.Author }}</div>
                     <div>Views: {{ recipe.Views }}</div>
                     <div>Added: {{ recipe.Added }} (UTC)</div>
             </section>

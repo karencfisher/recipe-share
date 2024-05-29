@@ -4,6 +4,21 @@ import base64
 from datetime import datetime
 from PIL import Image
 
+class RecipeCollection:
+    def __init__(self):
+        self.__collection = {}
+
+    def addRecipe(self, user_id, recipe_obj=None):
+        recipe = Recipe()
+        recipe.create_recipe(recipe=recipe_obj)
+        self.__collection[user_id] = recipe
+
+    def getRecipe(self, user_id):
+        return self.__collection.get(user_id, None)
+    
+    def deleteRecipe(self, user_id):
+        self.__collection.pop(user_id, None)
+    
 
 class Recipe:
     def __init__(self):
@@ -28,7 +43,7 @@ class Recipe:
     def get_recipe(self):
         return self.__recipe
     
-    def update_recipe(self, recipe):
+    def update_recipe(self, recipe, author):
         if recipe["imageData"] is not None:
             # unpack imageData
             _, data = recipe["imageData"].split(",")
@@ -54,11 +69,9 @@ class Recipe:
             recipe["Image_Name"] = base_file_name
 
         recipe["Added"] = datetime.utcnow()
+        recipe["Author"] = author
         del recipe["imageFile"]
         self.__recipe = recipe
-
-    def delete_recipe(self):
-        pass
 
 
     

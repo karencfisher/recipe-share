@@ -2,6 +2,12 @@
 const titleText = document.getElementById("title");
 titleText.focus();
 
+// track changes
+let dirty = false;
+addEventListener("change", () => {
+    dirty = true;
+});
+
 /* Add/remove items ******************************/
 function focusNext(item, textBox) {
     if (item.nextElementSibling) {
@@ -31,7 +37,7 @@ function addItem(textBox, itemClass, parent) {
             focusNext(item, textBox);
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
-            displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
+            displayMessage("info", `${string} removed ${countItems} ${itemClass}s remaining`, false);
         }
     });
 
@@ -42,7 +48,7 @@ function addItem(textBox, itemClass, parent) {
             focusNext(item, textBox);
             item.remove();
             const countItems = parent.querySelectorAll("div").length;
-            displayMessage(`${string} removed ${countItems} ${itemClass}s remaining`, false);
+            displayMessage("info", `${string} removed ${countItems} ${itemClass}s remaining`, false);
         }
         else if (e.key === "ArrowUp") {
             e.preventDefault();
@@ -71,7 +77,7 @@ function addItem(textBox, itemClass, parent) {
     parent.appendChild(item);
     item.focus()
     const countItems = parent.querySelectorAll("div").length;
-    displayMessage(`${string} added to total ${countItems} ${itemClass}s`, false);
+    displayMessage("info", `${string} added to total ${countItems} ${itemClass}s`, false);
     return item;             
 }
 
@@ -82,10 +88,10 @@ const ingredientList = document.getElementById("ingredient-container");
 titleText.addEventListener("keypress", (e) => {
     if (e.code === "Enter") {
         if (e.target.value === "") {
-            displayMessage("Title field must not be empty!", true);
+            displayMessage("error", "Title field must not be empty!", true);
         }
         else {
-            displayMessage(`Title ${e.target.value} added`, false)
+            displayMessage("info", `Title ${e.target.value} added`, false)
             ingredientText.focus();
         }
     }
@@ -123,7 +129,7 @@ instructionText.addEventListener("keypress", (e) => {
     item.addEventListener("focus", () => {
         const itemName = item.id.split("-")[0];
         const countItems = item.querySelectorAll("div").length;
-        displayMessage(`${countItems} ${itemName}s`, false);
+        displayMessage("info", `${countItems} ${itemName}s`, false);
     })
 });
 
@@ -148,7 +154,7 @@ tagText.addEventListener("keypress", (e) => {
     item.addEventListener("focus", () => {
         const itemName = item.id.split("-")[0];
         const countItems = item.querySelectorAll("div").length;
-        displayMessage(`${countItems} ${itemName}s`, false);
+        displayMessage("info", `${countItems} ${itemName}s`, false);
     })
 });
 
@@ -210,7 +216,7 @@ function buildRecipe(complete) {
 
     // check title
     if (recipe.Title === "") {
-        displayMessage("Must have a title!", true);
+        displayMessage("error", "Must have a title!", true);
         titleText.focus();
         return;
     }
@@ -218,7 +224,7 @@ function buildRecipe(complete) {
     // add ingredients
     const ingredients = [...document.getElementsByClassName("ingredient")];
     if (ingredients.length === 0) {
-        displayMessage("Must include at least one ingredient!", true);
+        displayMessage("error", "Must include at least one ingredient!", true);
         ingredientText.focus();
         return;
     }
@@ -229,7 +235,7 @@ function buildRecipe(complete) {
     // add instructions
     const instructions = [...document.getElementsByClassName("instruction")];
     if (instructions.length === 0) {
-        displayMessage("Must include at least one instruction!", true);
+        displayMessage("error", "Must include at least one instruction!", true);
         instructionText.focus();
         return;
     }
@@ -259,7 +265,7 @@ function buildRecipe(complete) {
         // add tags
         const tags = [...document.getElementsByClassName("tag")];
         if (tags.length === 0) {
-            displayMessage("Must include at least one tag!", true);
+            displayMessage("eror", "Must include at least one tag!", true);
             tagText.focus();
             return;
         }
@@ -269,7 +275,7 @@ function buildRecipe(complete) {
 
         // add description 
         if (descriptionText.value === "") {
-            displayMessage("Must include a description. \"I have writer\'s block\" button will allow AI to generate.", true );
+            displayMessage("error", "Must include a description. \"I have writer\'s block\" button will allow AI to generate.", true );
             descriptionText.focus();
             return;
         }
@@ -279,8 +285,32 @@ function buildRecipe(complete) {
 }
 
 backButton.addEventListener("click", () => {
-    history.back();
-});
+    if (dirty) {
+        showChangedDialog((confirmed) => {
+            if (confirmed) {
+                history.back();
+            }
+        });
+    }
+    else { 
+        history.back();
+    }
+}); 
+
+function showChangedDialog(callback) {
+    const changedDialog = document.getElementById("changed-dialog");
+    changedDialog.dataset.open = "true";
+
+    document.getElementById("changed-cancel-button").addEventListener("click", () => {
+        callback(false);
+        changedDialog.dataset.open = "false";
+    });
+   
+    document.getElementById("changed-ok-button").addEventListener("click", () => {
+        callback(true);
+        changedDialog.dataset.open = "false";
+    });
+}
 
 previewButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
@@ -300,7 +330,7 @@ previewButton.addEventListener("click", () => {
                 location.href = `/preview?mode=${document.body.className}`;
             }
             else {
-                displayMessage(`Error occured ${data.response}`);
+                displayMessage("info", `Error occured ${data.response}`, true);
             }
         })
         .catch(error => console.error('Error:', error));
@@ -310,6 +340,7 @@ previewButton.addEventListener("click", () => {
 publishButton.addEventListener("click", () => {
     recipe = buildRecipe(true);
     if (recipe != undefined) {
+        dirty = false;
         fetch('/update', {
             method: 'POST',
             headers: {
@@ -326,13 +357,13 @@ publishButton.addEventListener("click", () => {
                 .then(response => response.json())
                 .then(data => {
                     if (data.response == 200) {
-                        displayMessage("Recipe published!", true)
+                        displayMessage("info", "Recipe published!", true)
                     }
                 })
                 .catch(error => console.error('Error:', error));
             }
             else {
-                displayMessage(`Error occured ${data.response}`);
+                displayMessage("error", `Error occured ${data.response}`, true);
             }
         })
         .catch(error => console.error('Error:', error));
@@ -353,23 +384,33 @@ generateButton.addEventListener("click", () => {
         .then(response => response.json())
         .then(data => {
             descriptionText.value = data.response;
-            displayMessage("ChatGPT has written a description for you!", true);
+            displayMessage("info", "ChatGPT has written a description for you!", true);
         })
         .catch(error => console.error('Error:', error));
     }
 });
 
 /* error and screen reader live broadcasts ********/
-function displayMessage(message, show) {
-    const errorBox = document.getElementById("error-message");
-    errorBox.innerHTML = message;
+
+function displayMessage(type, msg, show) {
+    const errorMsg = document.getElementById("error-msg");
+    const errortxt = document.getElementById("error-txt");
+    const msgIcon = document.getElementById("msg-icon");
+    
+    errortxt.innerText = msg;
     if (show) {
-        errorBox.style.setProperty("top", "300px");
+        if (type === "info") {
+            msgIcon.innerText = "info";
+        }
+        else {
+            msgIcon.innerText = "error_outline";
+        }
+        errorMsg.dataset.open = "true";
     }
+
     setTimeout(() => {
-        errorBox.style.setProperty("top", "-100px");
-        errorBox.innerHTML = "";
-    }, 5000);
+        errorMsg.dataset.open = "false";
+    }, 2000);
 }
 
 const helpButton = document.getElementById("help-button");
@@ -383,4 +424,10 @@ helpButton.addEventListener("click", (e) => {
         help.style.setProperty("display", "none");
         e.target.innerHTML = "Show editing help";
     }
+});
+
+addEventListener("load", () => { 
+    const pick = Math.floor(Math.random() * 10);
+    const img = `url(static/background-images/food${pick}.jpg)`
+    document.body.style.setProperty("background-image", img);
 });

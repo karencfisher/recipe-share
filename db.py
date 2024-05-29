@@ -1,6 +1,4 @@
 import os
-import io
-import base64
 from dotenv import load_dotenv
 import openai
 from pymongo import MongoClient
@@ -21,8 +19,8 @@ class DB:
         else:
             CONNECTION_STRING = f"mongodb+srv://karen:{password}@{url}/recipe-share"
         client = MongoClient(CONNECTION_STRING)
-        db = client.get_database()
-        self.collection = db.get_collection("recipes")
+        self.db = client.get_database()
+        self.collection = self.db.get_collection("recipes")
 
         openai.api_key = os.getenv("OPENAI_KEY")
         self.model = "text-embedding-ada-002"
@@ -75,27 +73,19 @@ class DB:
         results = self.collection.find().sort("Views", -1).limit(max_found)
         return self.__extract_results(results)
     
-    def query_recipes_added(self, max_found):
-        results = self.collection.find().sort("Added", -1).limit(max_found)
+    def query_recipes_added(self, max_found, author):
+        results = self.collection.find({"Author": {"$ne": author}}).sort("Added", -1).limit(max_found)
+        return self.__extract_results(results)
+    
+    def query_recipes_by_user(self, author):
+        results = self.collection.find({"Author": author})
         return self.__extract_results(results)
 
     def query_recipe_by_id(self, id):
-        result = self.collection.find_one({"_id": ObjectId(id)})
-        if result is None:
+        recipe = self.collection.find_one({"_id": ObjectId(id)})
+        if recipe is None:
             return None
-        recipe = {
-                "_id": result["_id"],
-                "Title": result["Title"],
-                "Image_Name": result.get("Image_Name"),
-                "imageData": result.get("imageData"),
-                "Description": result["Description"],
-                "Views": result["Views"] + 1,
-                "Ingredients": result["Ingredients"],
-                "Instructions": result["Instructions"],
-                "Tags": result["Tags"],
-                "Added": result['Added']
-            }
-        
+        recipe["Views"] += 1
         self.collection.update_one({"_id": ObjectId(id)}, 
                                    {"$set": {"Views": recipe["Views"]}})
         return recipe
@@ -111,4 +101,31 @@ class DB:
             del recipe["_id"]
             self.collection.update_one({"_id": ObjectId(id)}, {"$set": recipe})
             recipe["_id"] = ObjectId(id)
+
+    def query_user_name(self, user_name):
+        user_collection = self.db.get_collection("users")
+        return user_collection.find_one({"username": user_name})
+    
+    def query_user_id(self, user_id):
+        user_collection = self.db.get_collection("users")
+        return user_collection.find_one({"_id": ObjectId(user_id)})
+    
+    def add_user(self, username, email, hashed_password):
+        new_user = {"username": username,
+                    "email": email,
+                    "password": hashed_password,
+                    "display_mode": "light-mode"}
+        user_collection = self.db.get_collection("users")
+        user_collection.insert_one(new_user)
+
+    def update_password(self, username, password):
+        user_collection = self.db.get_collection("users")
+        user_collection.update_one({"username": username}, 
+                                   {"$set": {"password": password}})
+        
+    def update_mode(self, username, mode):
+        user_collection = self.db.get_collection("users")
+        user_collection.update_one({"username": username}, 
+                                   {"$set": {"display_mode": mode}})
+    
 

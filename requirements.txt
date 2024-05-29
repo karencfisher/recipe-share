@@ -1,6 +1,8 @@
 openai==0.28.0
 python-dotenv
 flask
+flask-login
+flask-bcrypt
 pillow
 gunicorn
 pymongo

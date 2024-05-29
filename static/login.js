@@ -139,6 +139,35 @@ loginButton.addEventListener("click", async (e) => {
     }
 });
 
+document.getElementById("password-text").addEventListener("keypress", async (e) => {
+    let result = null;
+    if (e.code === 'Enter') {
+        const usernameText = document.getElementById("username-text").value;
+        const passwordText = document.getElementById("password-text").value;
+        query = {
+            "username": usernameText,
+            "password": passwordText
+        }
+        result = await callRoute("/login", query);
+
+        if (result.status === 401) {
+            displayError("error", "Incorrect username and/or password")
+        }
+        else if (result.status === 400) {
+            displayError("error", "Username is already in use")
+        }
+        else if (result.status === 500) {
+            displayError("error", "Error occured servicing request")
+        }
+        else if (e.target.innerText === "Register" && result.status === 200) {
+            displayError("info", "Sign up successfull. You may now login.")
+        }
+        else if (result.redirected) {
+            window.location.href = result.url;
+        }
+    }
+});
+
 const forgotButton = document.getElementById("forgot-button");
 forgotButton.addEventListener("click", async () => {
     const username = document.getElementById("username-text").value;

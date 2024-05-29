@@ -134,7 +134,7 @@ def reset_password():
 @login_required
 def home():
     try:
-        recent = db.query_recipes_added(int(5), current_user.username)
+        recent = db.query_recipes_added(int(10), current_user.username)
         contribs = db.query_recipes_by_user(current_user.username)
         user = db.query_user_name(current_user.username)
     except Exception as ex:
@@ -188,9 +188,17 @@ def edit_recipe():
     id = request.args.get("id")
     mode = request.args.get("mode")
     if update == "true":
-        recipe = db.query_recipe_by_id(id)
-        if recipe["Author"] != current_user.username:
-            return jsonify({"error": "Recipe not by current user!"}), 403
+        try:
+            recipe = db.query_recipe_by_id(id)
+            if recipe is None:
+                recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
+            else:
+                if recipe["Author"] != current_user.username:
+                    return jsonify({"error": "Recipe not by current user!"}), 403
+                recipes.addRecipe(current_user.get_id(), recipe)
+        except Exception as ex:
+            error_log.log_error(ex)
+            return jsonify({"error": "Internal server error"}), 500
     else:
         recipes.addRecipe(current_user.get_id())
         recipe = recipes.getRecipe(current_user.get_id()).get_recipe()
@@ -204,10 +212,10 @@ def insert_db():
     try:
         recipe = recipes.getRecipe(current_user.get_id())
         recipe.update_recipe(request.json, current_user.username)
-        return jsonify({"response": 200}), 200
     except Exception as ex:
         error_log.log_error(ex)
         return jsonify({"error": "Internal server error"}), 500
+    return jsonify({"response": 200}), 200
     
 @app.route('/preview')
 @login_required

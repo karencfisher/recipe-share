@@ -14,7 +14,7 @@ class RecipeCollection:
         self.__collection[user_id] = recipe
 
     def getRecipe(self, user_id):
-        return self.__collection[user_id]
+        return self.__collection.get(user_id, None)
     
     def deleteRecipe(self, user_id):
         self.__collection.pop(user_id, None)
@@ -72,9 +72,6 @@ class Recipe:
         recipe["Author"] = author
         del recipe["imageFile"]
         self.__recipe = recipe
-
-    def delete_recipe(self):
-        pass
 
 
     

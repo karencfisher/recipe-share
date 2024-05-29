@@ -113,7 +113,8 @@ class DB:
     def add_user(self, username, email, hashed_password):
         new_user = {"username": username,
                     "email": email,
-                    "password": hashed_password}
+                    "password": hashed_password,
+                    "display_mode": "light-mode"}
         user_collection = self.db.get_collection("users")
         user_collection.insert_one(new_user)
 

@@ -1,6 +1,4 @@
 import os
-import io
-import base64
 from dotenv import load_dotenv
 import openai
 from pymongo import MongoClient

@@ -1,0 +1,18 @@
+<html>
+    <body>
+        <p>
+            Welcome to Recipe-Share! In order to verify your registration, please
+            click on the following link. Bon appétit!
+        </p>
+        <a href={url}/validate?email={email_address}&key={key}>verify email</a>
+        <p> If the link does not work, copy/paste the following into your
+            browser:
+        </p>
+        <pre>
+            {url}/recover?email={email_address}&key={key}
+        </pre>
+        <p>
+            <b>Do not reply to this email</b>
+        </p>
+    </body>
+</html>

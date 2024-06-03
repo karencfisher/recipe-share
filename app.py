@@ -73,7 +73,7 @@ def register():
     try:
         url_obj = urlparse(request.base_url)
         url = f'{url_obj.scheme}://{url_obj.netloc}'
-        validations.validateEmail(url, email)
+        validations.validateEmail(url, username, email)
     except Exception as error:
         error_log.log_error(error)
         return jsonify({"error": "Unable to service request"}), 500
@@ -84,7 +84,7 @@ def validate():
     email = request.args.get('email')
     key = request.args.get('key')
     if (not validations.verifyRequest(email, key)):
-        return jsonify({"error": "Invalid request"}), 401
+        return jsonify({"error": "Invalid request"}), 403
     
     try:
         cache = registration_cache[email]
@@ -96,7 +96,7 @@ def validate():
     
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     db.add_user(username, email, hashed_password)
-    return jsonify({"success": "Your account is now created"}), 200
+    return render_template('login.html', reset=False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -129,7 +129,7 @@ def request_password():
     try:
         url_obj = urlparse(request.base_url)
         url = f'{url_obj.scheme}://{url_obj.netloc}'
-        validations.resetPassword(url, email)
+        validations.resetPassword(url, username, email)
     except Exception as error:
         error_log.log_error(error)
         return jsonify({"error": "Unable to service request"}), 500

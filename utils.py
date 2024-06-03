@@ -13,35 +13,40 @@ class Validations:
         self.smtp_port = 587
         self.smtp_password = os.getenv("SMTP_PASSWORD")
     
-    def resetPassword(self, url, email_address):
-        key = self.__add_key()
-        self.__sendRequest(url, email_address, key, "reset")
-
-    def validateEmail(self, url, email_address):
+    def resetPassword(self, url, username, email_address):
         key = self.__add_key(email_address)
-        self.__sendRequest(url, email_address, key, "validate")
+        self.__sendRequest(url, username, email_address, key, "reset")
+
+    def validateEmail(self, url, username, email_address):
+        key = self.__add_key(email_address)
+        self.__sendRequest(url, username, email_address, key, "validate")
 
     def __add_key(self, email_address):
         key = os.urandom(24).hex()
         self.__resetRequests[email_address] = key
         return key
 
-    def __sendRequest(self, url, email_address, key, reason):
+    def __sendRequest(self, url, username, email_address, key, reason):
         # get template and generate html
         with open(os.path.join('templates', f'{reason}_template.txt'), 'r') as FILE:
             template = FILE.read()
         html = template.format(
+            username=username,
             url=url,
             email_address=email_address,
             key=key
         )
+
+        caption = "Registration Verification"
+        if (reason == "reset"):
+            caption = "Password Reset"
 
         # Create a multipart message and set headers
         message = MIMEText(html, 'html')
         sender_email = "NOREPLY@recipe-share.app"
         message["From"] = "NOREPLY@recipe-share.app"
         message["To"] = email_address
-        message["Subject"] = "Recipe share password reset"
+        message["Subject"] = f"Recipe Share {caption}"
 
        # Send the email
         with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:

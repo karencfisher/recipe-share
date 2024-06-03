@@ -1,0 +1,19 @@
+<html>
+    <body>
+        <p>
+            Greetings {username}. You have requested to reset your Recipe Share password.
+            Assuming you requested this, click on the following link to create a new password.
+            If you did not request this, ignore this email, and there will be no changes.
+        </p>
+        <a href={url}/recover?email={email_address}&key={key}>reset password</a>
+        <p> If the link does not work, copy/paste the following into your
+            browser:
+        </p>
+        <pre>
+            {url}/recover?email={email_address}&key={key}
+        </pre>
+        <p>
+            <b>Do not reply to this email</b>
+        </p>
+    </body>
+</html>

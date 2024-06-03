@@ -1,0 +1,19 @@
+<html>
+    <body>
+        <p>
+            Welcome {username} to Recipe-Share! In order to verify your registration, please
+            click on the following link. Once that is received, a new login page should open.
+            If not, return to https://recipe-share.app to login. Bon appetit!
+        </p>
+        <a href={url}/validate?email={email_address}&key={key}>verify email</a>
+        <p> If the link does not work, copy/paste the following into your
+            browser:
+        </p>
+        <pre>
+            {url}/recover?email={email_address}&key={key}
+        </pre>
+        <p>
+            <b>Do not reply to this email</b>
+        </p>
+    </body>
+</html>

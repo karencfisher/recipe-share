@@ -9,7 +9,7 @@ import os
 
 from recipe import RecipeCollection
 from db import DB
-from utils import generateDescription, ErrorLog, ResetPassword
+from utils import generateDescription, ErrorLog, Validations
 
 
 load_dotenv()
@@ -18,9 +18,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 db = DB()
 recipes = RecipeCollection()
-password_reset = ResetPassword()
+validations = Validations()
 error_log = ErrorLog()
 bcrypt = Bcrypt()
+registration_cache = {}
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -46,6 +47,8 @@ class User(UserMixin):
 
 @app.route('/')
 def start():
+    if current_user.is_authenticated:
+        return redirect("/home")
     return render_template("login.html", reset=False)
 
 
@@ -63,9 +66,37 @@ def register():
     if user is not None:
         return jsonify({"error": "username already exists"}), 400
     
+    registration_cache[email] = {
+        "username": username,
+        "password": password
+    }
+    try:
+        url_obj = urlparse(request.base_url)
+        url = f'{url_obj.scheme}://{url_obj.netloc}'
+        validations.validateEmail(url, username, email)
+    except Exception as error:
+        error_log.log_error(error)
+        return jsonify({"error": "Unable to service request"}), 500
+    return jsonify({"success": "Request sent"}), 200
+    
+@app.route('/validate', methods=['GET'])
+def validate():
+    email = request.args.get('email')
+    key = request.args.get('key')
+    if (not validations.verifyRequest(email, key)):
+        return jsonify({"error": "Invalid request"}), 403
+    
+    try:
+        cache = registration_cache[email]
+        username = cache['username']
+        password = cache['password']
+        registration_cache.pop(email)
+    except KeyError:
+        return jsonify('error', 'Internal server error'), 500
+    
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     db.add_user(username, email, hashed_password)
-    return jsonify({"success": "Your account is now created"}), 200
+    return render_template('login.html', reset=False)
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -98,9 +129,9 @@ def request_password():
     try:
         url_obj = urlparse(request.base_url)
         url = f'{url_obj.scheme}://{url_obj.netloc}'
-        password_reset.sendRequest(url, email)
+        validations.resetPassword(url, username, email)
     except Exception as error:
-        print(error)
+        error_log.log_error(error)
         return jsonify({"error": "Unable to service request"}), 500
     return jsonify({"success": "Request sent"}), 200
 
@@ -108,7 +139,7 @@ def request_password():
 def recover_password():
     email = request.args.get('email')
     key = request.args.get('key')
-    if (password_reset.verifyRequest(email, key)):
+    if (validations.verifyRequest(email, key)):
         return render_template("login.html", reset=True)
     else:
         return jsonify({"error": "Invalid request"}), 403
@@ -122,9 +153,9 @@ def reset_password():
     try:
         db.update_password(username, hashed_password)
         email = db.query_user_name(username)['email']
-        password_reset.deleteRequest(email)
+        validations.deleteRequest(email)
     except Exception as error:
-        print(error)
+        error_log.log_error(error)
         return jsonify({"error": "Error in servicing request"}), 500
     return jsonify({"success": "Password updated"}), 200
     

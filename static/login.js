@@ -88,6 +88,11 @@ loginButton.addEventListener("click", async (e) => {
             return;
         }
 
+        if (passwordText === "") {
+            displayError("error", "Empty passwords not allowed!");
+            return;
+        }
+
         query = {
             "username": usernameText,
             "email": emailText,
@@ -101,8 +106,18 @@ loginButton.addEventListener("click", async (e) => {
         const passwordText = document.getElementById("password-text").value;
         const passwordConfirmText = document.getElementById("password-confirm-text").value;
 
+        if (usernameText === "") {
+            displayError("error", "Include your user name in this request!");
+            return;
+        }
+        
         if (passwordText !== passwordConfirmText) {
             displayError("error", "Passwords do not match");
+            return;
+        }
+
+        if (passwordText === "") {
+            displayError("error", "Empty passwords not allowed!");
             return;
         }
 
@@ -132,7 +147,10 @@ loginButton.addEventListener("click", async (e) => {
         displayError("error", "Error occured servicing request")
     }
     else if (e.target.innerText === "Register" && result.status === 200) {
-        displayError("info", "Sign up successfull. You may now login.")
+        displayError("info", "Email has been sent to validate and complete your registration.")
+    }
+    else if (e.target.innerText === "Save" && result.status === 200) {
+        displayError("info", "Password reset successfully. You can return to login page and login.");
     }
     else if (result.redirected) {
         window.location.href = result.url;
@@ -169,17 +187,23 @@ document.getElementById("password-text").addEventListener("keypress", async (e) 
 });
 
 const forgotButton = document.getElementById("forgot-button");
-forgotButton.addEventListener("click", async () => {
-    const username = document.getElementById("username-text").value;
-    query = {"username": username};
-    result = await callRoute("/request", query);
-    if (result.status === 500) {
-        displayError("error", "Error processing request.")
-    }
-    else {
-        displayError("success", "Email has been sent with instructions to reset your password.")
-    }
-});
+if (forgotButton) {
+    forgotButton.addEventListener("click", async () => {
+        const username = document.getElementById("username-text").value;
+        if (username === "") {
+            displayError("error", "Include your user name in this request!");
+            return;
+        }
+        query = {"username": username};
+        result = await callRoute("/request", query);
+        if (result.status === 500) {
+            displayError("error", "Error processing request.")
+        }
+        else {
+            displayError("success", "Email has been sent with instructions to reset your password.")
+        }
+    });
+}
 
 function displayError(type, msg) {
     const errorMsg = document.getElementById("error-msg");

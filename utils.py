@@ -6,50 +6,50 @@ import smtplib
 from email.mime.text import MIMEText
 
 
-class ResetPassword:
+class Validations:
     def __init__(self):
         self.__resetRequests = {}
+        self.smtp_server = "live.smtp.mailtrap.io"
+        self.smtp_port = 587
         self.smtp_password = os.getenv("SMTP_PASSWORD")
+    
+    def resetPassword(self, url, username, email_address):
+        key = self.__add_key(email_address)
+        self.__sendRequest(url, username, email_address, key, "reset")
 
-    def sendRequest(self, url, email_address):
+    def validateEmail(self, url, username, email_address):
+        key = self.__add_key(email_address)
+        self.__sendRequest(url, username, email_address, key, "validate")
+
+    def __add_key(self, email_address):
         key = os.urandom(24).hex()
         self.__resetRequests[email_address] = key
+        return key
 
-        html = f"""
-        <html>
-            <body>
-                <p>
-                    You have requested to reset your Recipe Share password.
-                    Assuming you requested this, click on the following link.
-                    If you did not request this, ignore this email, and there
-                    will be no changes.
-                </p>
-                <a href={url}/recover?email={email_address}&key={key}>reset password</a>
-                <p> If the link does not work, copy/paste the following into your
-                    browser:
-                </p>
-                <pre>
-                    {url}/recover?email={email_address}&key={key}
-                </pre>
-                <p>
-                    <b>Do not reply to this email</b>
-                </p>
-            </body>
-        </html>
-        """
+    def __sendRequest(self, url, username, email_address, key, reason):
+        # get template and generate html
+        with open(os.path.join('templates', f'{reason}_template.txt'), 'r') as FILE:
+            template = FILE.read()
+        html = template.format(
+            username=username,
+            url=url,
+            email_address=email_address,
+            key=key
+        )
+
+        caption = "Registration Verification"
+        if (reason == "reset"):
+            caption = "Password Reset"
 
         # Create a multipart message and set headers
         message = MIMEText(html, 'html')
         sender_email = "NOREPLY@recipe-share.app"
-        port = 587
-        smtp_server = "live.smtp.mailtrap.io"
-    
-        message["From"] = "NOREPLY@recipe-share.com"
+        message["From"] = "NOREPLY@recipe-share.app"
         message["To"] = email_address
-        message["Subject"] = "Recipe share password reset"
+        message["Subject"] = f"Recipe Share {caption}"
 
        # Send the email
-        with smtplib.SMTP(smtp_server, port) as server:
+        with smtplib.SMTP(self.smtp_server, self.smtp_port) as server:
             server.starttls()
             server.login("api", self.smtp_password)
             server.sendmail(sender_email, email_address, message.as_string())   
